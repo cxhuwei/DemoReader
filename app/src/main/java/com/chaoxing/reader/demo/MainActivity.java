@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chaoxing.epub.EpubActivity;
 import com.chaoxing.epub.EpubDocument;
 import com.chaoxing.pdf.PdfActivity;
 import com.chaoxing.pdf.util.PdfUtils;
@@ -110,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
     private void openFile(File file) {
         if (PdfUtils.getFileExtension(file).equalsIgnoreCase("pdf")) {
             Intent intent = new Intent(this, PdfActivity.class);
+            intent.setData(Uri.fromFile(file));
+            startActivity(intent);
+        } else if (PdfUtils.getFileExtension(file).equalsIgnoreCase("epub")) {
+            Intent intent = new Intent(this, EpubActivity.class);
             intent.setData(Uri.fromFile(file));
             startActivity(intent);
         }
