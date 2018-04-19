@@ -8,6 +8,6 @@ public class EpubDocument {
 
     public static native String sayHello();
 
-    protected static native EpubDocument openDocumentWithPath(String path);
+    public static native EpubDocument openDocument(String path);
 
 }
