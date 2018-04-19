@@ -3,7 +3,7 @@ package com.chaoxing.epub.nativeapi;
 public class EpubDocument {
 
     static {
-        System.loadLibrary("native-epub");
+        System.loadLibrary("epub");
     }
 
     public static native String sayHello();
