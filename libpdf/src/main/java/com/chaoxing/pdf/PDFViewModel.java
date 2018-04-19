@@ -13,7 +13,7 @@ import android.util.DisplayMetrics;
  */
 public class PDFViewModel extends AndroidViewModel {
 
-    private PdfLoader mDocumentHelper = new PdfLoader();
+    private PdfLoader mPdfLoader = new PdfLoader();
     private PdfPageLoader mPageLoader;
 
     private final MutableLiveData<String> mPath = new MutableLiveData<>();
@@ -35,16 +35,16 @@ public class PDFViewModel extends AndroidViewModel {
     public PDFViewModel(@NonNull Application application) {
         super(application);
         mOpenDocumentResult = Transformations.switchMap(mPath, documentPath -> {
-            return mDocumentHelper.openDocument(documentPath);
+            return mPdfLoader.openDocument(documentPath);
         });
 
         mCheckPasswordResult = Transformations.switchMap(mPassword, password -> {
-            return mDocumentHelper.checkPassword(mOpenDocumentResult.getValue().getData().getDocument(), password);
+            return mPdfLoader.checkPassword(mOpenDocumentResult.getValue().getData().getDocument(), password);
         });
 
         mLoadDocumentResult = Transformations.switchMap(mLoadDocument, pdfBinding -> {
             DisplayMetrics dm = getApplication().getResources().getDisplayMetrics();
-            return mDocumentHelper.loadDocument(pdfBinding, dm.widthPixels, dm.heightPixels);
+            return mPdfLoader.loadDocument(pdfBinding, dm.widthPixels, dm.heightPixels);
         });
 
         mLoadPageResult = Transformations.switchMap(mLoadPage, (args) -> {
@@ -57,7 +57,7 @@ public class PDFViewModel extends AndroidViewModel {
         });
 
         mLoadOutlineResult = Transformations.switchMap(mLoadOutline, (pdfBinding) -> {
-            return mDocumentHelper.loadOutline(pdfBinding);
+            return mPdfLoader.loadOutline(pdfBinding);
         });
     }
 
