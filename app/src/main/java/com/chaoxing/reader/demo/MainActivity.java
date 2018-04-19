@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chaoxing.epub.EpubActivity;
-import com.chaoxing.epub.EpubDocument;
 import com.chaoxing.pdf.PdfActivity;
 import com.chaoxing.pdf.util.PdfUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;

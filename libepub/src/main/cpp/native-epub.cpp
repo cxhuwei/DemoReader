@@ -4,7 +4,7 @@
 extern "C" JNIEXPORT jstring
 
 JNICALL
-Java_com_chaoxing_epub_EpubDocument_sayHello(
+Java_com_chaoxing_epub_nativeapi_EpubDocument_sayHello(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
@@ -13,7 +13,8 @@ Java_com_chaoxing_epub_EpubDocument_sayHello(
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_com_chaoxing_epub_EpubDocument_openDocumentWithPath(JNIEnv *env, jclass type, jstring path_) {
+Java_com_chaoxing_epub_nativeapi_EpubDocument_openDocumentWithPath(JNIEnv *env, jclass type,
+                                                                   jstring path_) {
     const char *path = env->GetStringUTFChars(path_, 0);
 
     // TODO
