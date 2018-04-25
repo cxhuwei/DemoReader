@@ -110,7 +110,7 @@ public class PdfActivity  extends AppCompatActivity {
         mTvTitle = findViewById(R.id.tv_title);
         mIbRight = findViewById(R.id.ib_right);
         mIbRight.setOnClickListener(mOnClickListener);
-        mBottomBar = findViewById(R.id.bottomBar);
+        mBottomBar = findViewById(R.id.bottom_bar);
         mTvPageNumber = findViewById(R.id.tv_page_number);
         mIbNavigation = findViewById(R.id.ib_navigation);
         mIbNavigation.setOnClickListener(mOnClickListener);

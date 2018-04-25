@@ -87,7 +87,7 @@ public class PDFViewModel extends AndroidViewModel {
     }
 
     public PdfBinding getPdfBinding() {
-        return mLoadDocumentResult.getValue().getData();
+        return mLoadDocumentResult.getValue() != null ? mLoadDocumentResult.getValue().getData() : null;
     }
 
     public void loadPage(int pageNumber, int width) {
