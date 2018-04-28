@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#33999999" />
+
+    <ViewFlipper
+        android:id="@+id/vf_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/libepub_forward_panel" />
+
+        <include layout="@layout/libepub_reading_style_panel" />
+
+        <include layout="@layout/libepub_text_stytle_panel" />
+
+    </ViewFlipper>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#33999999" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_navigation"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_format_list_bulleted_black_24dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_forward"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_forward_black_24dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_reading_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_brightness_medium_black_24dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_text_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_format_color_text_black_24dp" />
+
+    </LinearLayout>
+</LinearLayout>

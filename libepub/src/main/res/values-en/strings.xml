@@ -1,5 +1,8 @@
 <resources>
 
     <string name="libepub_activity_epub">ChaoXing Reader</string>
+    <string name="libepub_outline">目录</string>
+    <string name="libepub_bookmark">书签</string>
+    <string name="libepub_flip_page">仿真书卷</string>
 
 </resources>

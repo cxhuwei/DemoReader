@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#EFFFFFFF"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_left"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="52dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_chevron_left_black_36dp" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/ib_right"
+            android:layout_toRightOf="@+id/ib_left"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Title"
+            android:textColor="#FF333333"
+            android:textSize="16dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/ib_right"
+            android:layout_width="52dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_more_vert_black_36dp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_gravity="bottom"
+        android:background="#33999999" />
+
+</FrameLayout>

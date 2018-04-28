@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_outline"
+    <ImageView
+        android:id="@+id/page_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -16,11 +16,11 @@
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
-        <ProgressBar
-            android:id="@+id/loading_view"
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/pb_loading"
+            style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_gravity="center_horizontal" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            tools:text="目录加载失败" />
+            tools:text="页面加载失败" />
 
         <Button
             android:id="@+id/btn_retry"

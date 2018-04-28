@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_brightness_low_black_24dp" />
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/sb_progress"
+            style="@style/Widget.AppCompat.SeekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:scaleType="center"
+            android:src="@mipmap/libepub_ic_brightness_high_black_24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="#33FFFFFF" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="#33ffff80" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="#1f80ff80" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="#33808080" />
+    </LinearLayout>
+
+</LinearLayout>

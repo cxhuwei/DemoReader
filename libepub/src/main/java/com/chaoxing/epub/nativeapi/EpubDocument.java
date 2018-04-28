@@ -1,22 +1,24 @@
 package com.chaoxing.epub.nativeapi;
 
+/**
+ * Created by HUWEI on 2018/4/24.
+ */
 public class EpubDocument {
 
     static {
         System.loadLibrary("epub");
     }
 
-    public static final String META_FORMAT = "format";
-    public static final String META_INFO_AUTHOR = "info:Author";
-    public static final String META_INFO_TITLE = "info:Title";
-
     public static native String sayHello();
 
-    public static native EpubDocument openDocument(String path);
+    public static native int openDocument(String path);
 
-    public static native String getMetaData(String key);
+    public static native String getTitle();
 
-    public static native Chapter[] loadChapter();
+    public static native String getAuthor();
 
+    public static native int loadFileCount();
+
+    public static native int loadPageCountByFile();
 
 }
