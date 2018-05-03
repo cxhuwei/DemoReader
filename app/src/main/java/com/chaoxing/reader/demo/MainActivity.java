@@ -3,7 +3,6 @@ package com.chaoxing.reader.demo;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;

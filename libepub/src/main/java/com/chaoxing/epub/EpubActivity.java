@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -207,7 +208,7 @@ public class EpubActivity extends AppCompatActivity {
             if (id == R.id.ib_left) {
                 onBackPressed();
             } else if (id == R.id.ib_right) {
-
+                popupMenu();
             } else if (id == R.id.ib_navigation) {
                 if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -227,6 +228,12 @@ public class EpubActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void popupMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, mIbRight);
+        popupMenu.getMenuInflater().inflate(R.menu.libepub_epub, popupMenu.getMenu());
+        popupMenu.show();
+    }
 
     private void switchBar() {
         if (mToolbar.getVisibility() == View.VISIBLE || mBottomBar.getVisibility() == View.VISIBLE) {

@@ -1,6 +1,12 @@
 <resources>
 
     <string name="libepub_activity_epub">ChaoXing Reader</string>
+
+    <!--menu-->
+    <string name="libepub_menu_add_bookmark">添加书签</string>
+    <string name="libepub_menu_del_bookmark">删除书签</string>
+    <!--menu end-->
+
     <string name="libepub_outline">目录</string>
     <string name="libepub_bookmark">书签</string>
     <string name="libepub_flip_page">仿真书卷</string>
