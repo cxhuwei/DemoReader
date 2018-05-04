@@ -16,13 +16,14 @@ public class EpubDocument {
     private EpubInfo epubInfo;         // epub元数据
     private Catalog[] catalogs;        // 目录
     private int fileCount;             // 文件数量
-    private int foregroundColor;       // 前景色
-    private int backgroundColor;       // 背景色
-    private int textLevel;             // 文字大小级别
+
     private int width;                 // 页面宽度
     private int height;                // 页面高度
     private Rect bounds;               // 页面绘制区域
     private float density;
+    private int foregroundColor;       // 前景色
+    private int backgroundColor;       // 背景色
+    private int textLevel;             // 文字大小级别
 
     public String getPath() {
         return path;
@@ -34,18 +35,6 @@ public class EpubDocument {
 
     public Catalog[] getCatalogs() {
         return catalogs;
-    }
-
-    public int getForegroundColor() {
-        return foregroundColor;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public int getTextLevel() {
-        return textLevel;
     }
 
     public int getWidth() {
@@ -62,6 +51,18 @@ public class EpubDocument {
 
     public float getDensity() {
         return density;
+    }
+
+    public int getForegroundColor() {
+        return foregroundColor;
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public int getTextLevel() {
+        return textLevel;
     }
 
     private static EpubDocument sInstance;
@@ -107,6 +108,13 @@ public class EpubDocument {
      * @return 解析器响应的色值
      */
     private native int nativeSetBackgroundColor(int color);
+
+    /**
+     * 设置字体资源
+     *
+     * @param fontResource fontResource[0]:中文字体;fontResource[1]:英文字体
+     */
+    private native void nativeSetFontResource(String[] fontResource);
 
     public int setTextLevel(int level) {
         int result = nativeSetTextLevel(level);
