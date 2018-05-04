@@ -110,11 +110,12 @@ public class EpubDocument {
     private native int nativeSetBackgroundColor(int color);
 
     /**
-     * 设置字体资源
+     * 设置字体
      *
      * @param fontResource fontResource[0]:中文字体;fontResource[1]:英文字体
+     * @return 1:设置成功
      */
-    private native void nativeSetFontResource(String[] fontResource);
+    private native int nativeSetFontResource(String[] fontResource);
 
     public int setTextLevel(int level) {
         int result = nativeSetTextLevel(level);
