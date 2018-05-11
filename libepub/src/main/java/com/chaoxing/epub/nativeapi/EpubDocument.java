@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class EpubDocument {
 
     static {
-        System.loadLibrary("epub");
+        System.loadLibrary("EpubReader9");
     }
 
     private String path;               // epub路径

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -22,7 +23,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.chaoxing.epub.nativeapi.EpubDocument;
+import com.chaoxing.epub.nativeapi.EpubInfo;
 import com.chaoxing.epub.util.EpubUtils;
+import com.chaoxing.epub.util.UriUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +72,29 @@ public class EpubActivity extends AppCompatActivity {
             pageList.add(Resource.success(new EpubPage()));
         }
         mPagerAdapter.setPageList(pageList);
+
+        Uri uri = getIntent().getData();
+        String mimetype = getIntent().getType();
+        String uriStr = uri.toString();
+
+        final String path = UriUtils.getRealPath(this, uri);
+
+        if (path == null) {
+            finish();
+            return;
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i = EpubDocument.get().setBackgroundColor(Color.WHITE);
+                int i2 = EpubDocument.get().setTextLevel(0);
+                EpubInfo info = EpubDocument.get().openDocument(path);
+                if (info == null) {
+
+                }
+            }
+        }).start();
     }
 
     protected void initView() {
