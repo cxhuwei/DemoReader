@@ -8,7 +8,7 @@ import android.graphics.Bitmap;
 public class EpubDocument {
 
     static {
-        System.loadLibrary("EpubReader9");
+        System.loadLibrary("epub");
     }
 
     private static EpubDocument sInstance;
