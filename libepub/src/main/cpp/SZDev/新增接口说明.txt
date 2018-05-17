@@ -1,0 +1,87 @@
+
+2013-7-9
+新增接口
+bool SetFontSizeMap(vector<int> fontSize);
+
+接口说明：参数 用数组设置字体字号，下标从0开始。
+		例子：vector<int> fontsize;
+			fontsize.push_back(28);
+			fontsize.push_back(30);
+			fontsize.push_back(32);
+			fontsize.push_back(34);
+			fontsize.push_back(36);
+			fontsize.push_back(38);
+			fontsize.push_back(40);
+			fontsize.push_back(42);
+			fontsize.push_back(44);
+			fontsize.push_back(46);
+			fontsize.push_back(48);
+			fontsize.push_back(50);
+			EbookReader.SetFontSizeMap(fontsize);
+	返回值 如果返回false说明设置字体字号失败。则不能打开图书。
+		如果返回true可以正常打开图书。
+
+备注说明：
+	1.在使用该函数之前，需要首先调用SetChineseFont和SetEnglishFont这两个函数把中英文字体路径设置到解析器里面。在打开图书过程中改变字体，仍然需要在调用SetChineseFont和SetEnglishFont这两个函数之后，调用该函数，设置字体字号级别。
+	2.解析器中打开书默认字体下标是5.如果需要修改，可以调用SetZoomRatio这个接口设置（改接口之前已经存在，用法没变化）.
+	3.如果调用SetChineseFont和SetEnglishFont之后，没有调用该函数，那么字体字号级别会使用解析器里面默认值 ,8 ,10，12 ,14 ,17 ,20 ,24 ,28 ,32 ,36 ,40 ,44 ,48 ,52 ,56; 
+
+
+2013-4-10
+不再使用接口
+	bool SetFontSizeMap(vector<int> fontSize);
+新增接口
+   Vt_curPageMultiMedia GetCurPageMultiMedia();//得到当前页的多媒体数据信息（内部连接、图像、视频）
+   void* GotoInterPage(string url,SZImageBit24 &imageCur, long& imageSize);//通过内部连接url进行内部跳页
+    bool GetMultiFileData(string filepath,void** data,long& size, MultimediaType mt);//根据多媒体信息（文件路径）得到媒体数据
+
+使用说明
+   1.在得到页图像数据之后，需要调用GetCurPageMultiMedia（）拿到这一页的媒体信息，如果是预读，需要保存起来（类似页文字信息）
+   2.根据Vt_curPageMultiMedia 判断点击的位置，pc代码如下 
+			for (m_pos = m_curpageMultiMedia.begin();m_pos != m_curpageMultiMedia.end();m_pos++)
+			{
+				MultimediaPage temp = *m_pos;
+				CRect tr(temp.lefttop_x,temp.lefttop_y,temp.rightbottom_x,temp.rightbottom_y);
+				if(tr.PtInRect(pic_point))
+				{
+					HCURSOR hCur  =  LoadCursor( NULL,IDC_HAND) ;
+					::SetCursor(hCur);
+					m_isClick = true;
+					break;
+				}
+			}
+  3.点击之后，响应代码  pc代码如下
+		MultimediaPage temp = *m_pos;
+		if (temp.type == MT_Link)
+		{
+			SZImageBit24 ib24;
+			long lenght;
+			string url = temp.filePath;
+			BYTE* buffer = (BYTE*)EbookReader.GotoInterPage(url.c_str(),ib24,lenght);
+			if (buffer != NULL)
+			{
+				image.Decode(buffer,lenght,CXIMAGE_FORMAT_BMP);
+				if (image.IsValid())
+				{		
+
+					m_curPageNumber = EbookReader.GetCurrentPageNum();
+					m_pagewordinfo = EbookReader.GetCurPageWordInfo();
+					m_curpageMultiMedia = EbookReader.GetCurPageMultiMedia();
+
+				}
+			}
+		}
+		else if (temp.type == MT_Image)
+		{
+			byte* data = NULL;
+			long size = 0;
+			if(EbookReader.GetMultiFileData(temp.filePath,&data,size))
+			{
+				image.Decode(data,size,CXIMAGE_FORMAT_BMP);
+				if (image.IsValid())
+				{
+					image.Save("g:\\bmp.bmp",CXIMAGE_FORMAT_BMP);
+				}
+			}
+			
+		}
