@@ -75,6 +75,7 @@ public class EpubActivity extends AppCompatActivity {
     private View mPageContainer;
     private RecyclerView mDocumentPager;
     private EpubPagerAdapter mPagerAdapter;
+    private View mEmptyCover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +243,10 @@ public class EpubActivity extends AppCompatActivity {
         mDocumentPager.setAdapter(mPagerAdapter);
         mDocumentPager.addOnScrollListener(mOnPagerScrollListener);
 
+        mEmptyCover = findViewById(R.id.empty_cover);
+        mEmptyCover.setVisibility(View.GONE);
+        mEmptyCover.setOnClickListener(mOnClickListener);
+
         // loading
         mLoadingView = findViewById(R.id.pb_loading);
         mLoadingView.setVisibility(View.GONE);
@@ -258,6 +263,20 @@ public class EpubActivity extends AppCompatActivity {
         mToolbar.setVisibility(View.GONE);
         mBottomBar.setVisibility(View.GONE);
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mOnSystemUiVisibilityChangeListener);
+        notifyPageCountChanged();
+    }
+
+    private void notifyPageCountChanged() {
+
+        checkEmptyAdapter();
+    }
+
+    private void checkEmptyAdapter() {
+        if (mPagerAdapter == null || mPagerAdapter.getItemCount() == 0) {
+            mEmptyCover.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyCover.setVisibility(View.GONE);
+        }
     }
 
     private View.OnSystemUiVisibilityChangeListener mOnSystemUiVisibilityChangeListener = new View.OnSystemUiVisibilityChangeListener() {
@@ -298,7 +317,7 @@ public class EpubActivity extends AppCompatActivity {
                 onBackPressed();
             } else if (id == R.id.ib_right) {
                 popupMenu();
-            } else if (id == R.id.document_pager) {
+            } else if (id == R.id.empty_cover) {
                 switchBar();
             } else if (id == R.id.ib_navigation) {
                 if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {

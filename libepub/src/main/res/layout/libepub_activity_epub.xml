@@ -19,6 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <View
+            android:id="@+id/empty_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <include layout="@layout/libepub_activity_epub_toolbar" />
 
         <include layout="@layout/libepub_activity_epub_bottom_bar" />
