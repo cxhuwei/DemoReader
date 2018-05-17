@@ -5,12 +5,14 @@ package com.chaoxing.epub.nativeapi;
  */
 public class EpubInfo {
 
-    public String issued;// 发行时间
-    public String summary;// 书封地址
-    public String category;
+    public String title;
+    public String creator;
+    public String description;
+    public String language;
+    public String contributor;
     public String publisher;
-    public String isbn;
-    public String author;// 作者
+    public String subject;
+    public String identifier;
 
     EpubInfo() {
     }

@@ -1,7 +1,6 @@
 package com.chaoxing.epub.nativeapi;
 
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 
 /**
  * Created by HUWEI on 2018/4/24.
@@ -10,59 +9,6 @@ public class EpubDocument {
 
     static {
         System.loadLibrary("EpubReader9");
-    }
-
-    private String path;               // epub路径
-    private EpubInfo epubInfo;         // epub元数据
-    private Catalog[] catalogs;        // 目录
-    private int fileCount;             // 文件数量
-
-    private int width;                 // 页面宽度
-    private int height;                // 页面高度
-    private Rect bounds;               // 页面绘制区域
-    private float density;
-    private int foregroundColor;       // 前景色
-    private int backgroundColor;       // 背景色
-    private int textLevel;             // 文字大小级别
-
-    public String getPath() {
-        return path;
-    }
-
-    public EpubInfo getEpubInfo() {
-        return epubInfo;
-    }
-
-    public Catalog[] getCatalogs() {
-        return catalogs;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public Rect getBounds() {
-        return bounds;
-    }
-
-    public float getDensity() {
-        return density;
-    }
-
-    public int getForegroundColor() {
-        return foregroundColor;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public int getTextLevel() {
-        return textLevel;
     }
 
     private static EpubDocument sInstance;
@@ -81,66 +27,37 @@ public class EpubDocument {
         return sInstance;
     }
 
-    public int setForegroundColor(int color) {
-        int result = nativeSetForegroundColor(color);
-        this.foregroundColor = result;
-        return result;
-    }
-
     /**
      * 设置页面前景色（文字颜色）
      *
      * @param color argb色值（如：0xFF666666）
-     * @return 解析器响应的色值
+     * @return 0:成功 or 失败
      */
-    private native int nativeSetForegroundColor(int color);
-
-    public int setBackgroundColor(int color) {
-        int result = nativeSetBackgroundColor(color);
-        this.backgroundColor = result;
-        return result;
-    }
+    public native int nativeSetForegroundColor(int color);
 
     /**
      * 设置页面背景色
      *
      * @param color argb色值（如：0xFF666666）
-     * @return 解析器响应的色值
+     * @return 0:成功 or 失败
      */
-    private native int nativeSetBackgroundColor(int color);
+    public native int nativeSetBackgroundColor(int color);
 
     /**
      * 设置字体
      *
      * @param fontResource fontResource[0]:中文字体;fontResource[1]:英文字体
-     * @return 1:设置成功
+     * @return 0:成功 or 失败
      */
-    private native int nativeSetFontResource(String[] fontResource);
-
-    public int setTextLevel(int level) {
-        int result = nativeSetTextLevel(level);
-        this.textLevel = result;
-        return result;
-    }
+    public native int nativeSetFontResource(String[] fontResource);
 
     /**
      * 设置文字大小级别（0：默认级别；-，+1调整级别）
      *
      * @param level 文字大小级别
-     * @return 解析器响应的级别
+     * @return 0:成功 or 失败
      */
-    private native int nativeSetTextLevel(int level);
-
-    public boolean layout(int width, int height, Rect bounds, float density) {
-        boolean result = nativeLayout(width, height, bounds.left, bounds.top, bounds.right, bounds.bottom, density);
-        if (result) {
-            this.width = width;
-            this.height = height;
-            this.bounds = new Rect(bounds.left, bounds.top, bounds.right, bounds.bottom);
-            this.density = density;
-        }
-        return result;
-    }
+    public native int nativeSetTextLevel(int level);
 
     /**
      * 页面宽高及绘制区域
@@ -154,18 +71,8 @@ public class EpubDocument {
      * @param density 设备像素密度
      * @return true or false
      */
-    private native boolean nativeLayout(int width, int height, int left, int top, int right, int bottom, float density);
+    public native int nativeLayout(int width, int height, int left, int top, int right, int bottom, float density);
 
-    /**
-     * 打开epub
-     *
-     * @return epub元数据
-     */
-    public EpubInfo openDocument(String path) {
-        this.path = path;
-        this.epubInfo = nativeOpenDocument(path);
-        return this.epubInfo;
-    }
 
     /**
      * 打开epub
@@ -173,40 +80,28 @@ public class EpubDocument {
      * @param path epub路径
      * @return epub元数据
      */
-    private native EpubInfo nativeOpenDocument(String path);
-
-
-    public Catalog[] getCatalog() {
-        Catalog[] catalogs = nativeGetCatalog();
-        this.catalogs = catalogs;
-        return catalogs;
-    }
+    public native EpubInfo nativeOpenDocument(String path);
 
     /**
      * 获取目录
      *
      * @return
      */
-    private native Catalog[] nativeGetCatalog();
+    public native Catalog[] nativeGetCatalog();
 
-    public int getFileCount() {
-        int result = nativeGetFileCount();
-        this.fileCount = result;
-        return result;
-    }
 
     /**
      * 获取epub的总文件数
      *
      * @return
      */
-    private native int nativeGetFileCount();
+    public native int nativeGetFileCount();
 
     /**
-     * 获取文件的总页码
+     * 获取单个文件的页数
      *
      * @param fileId 文件id
-     * @return
+     * @return 页数
      */
     public native int nativeGetPageCountByFile(int fileId);
 
@@ -224,24 +119,14 @@ public class EpubDocument {
      * @param fileId     文件id
      * @param pageNumber 文件内部页码
      * @param bitmap     页面位图
-     * @return 1:绘制成功;
+     * @return 0:成功 or 失败
      */
     public native int nativeDrawPage(int fileId, int pageNumber, Bitmap bitmap);
-
-    public void coloseDocument() {
-        try {
-            nativeColoseDocument();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        } finally {
-            sInstance = null;
-        }
-    }
 
     /**
      * 销毁解析器
      */
-    public native void nativeColoseDocument();
+    public native void nativeCloseDocument();
 
     /**
      * 解析器回调事件标记

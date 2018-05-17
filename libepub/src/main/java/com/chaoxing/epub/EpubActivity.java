@@ -2,10 +2,16 @@ package com.chaoxing.epub;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +28,15 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.chaoxing.epub.nativeapi.EpubDocument;
-import com.chaoxing.epub.nativeapi.EpubInfo;
+import com.chaoxing.epub.nativeapi.OnEventListener;
 import com.chaoxing.epub.util.EpubUtils;
 import com.chaoxing.epub.util.UriUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +44,11 @@ import java.util.List;
  * Created by HUWEI on 2018/4/18.
  */
 public class EpubActivity extends AppCompatActivity {
+
+    public static final String TAG = "EPUB_READER";
+
+    private EventHandler mEventHandler;
+    private EpubViewModel mViewModel;
 
     private DrawerLayout mDrawerLayout;
     private View mToolbar;
@@ -55,7 +69,10 @@ public class EpubActivity extends AppCompatActivity {
     private ViewPager mVpNavigation;
     private CatalogView mCatalogView;
     private BookmarkView mBookmarkView;
+    private View mLoadingView;
+    private TextView mTvMessage;
 
+    private View mPageContainer;
     private RecyclerView mDocumentPager;
     private EpubPagerAdapter mPagerAdapter;
 
@@ -65,13 +82,23 @@ public class EpubActivity extends AppCompatActivity {
         EpubUtils.setSystemUIVisible(this, false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.libepub_activity_epub);
+        mEventHandler = new EventHandler(this);
+        mViewModel = ViewModelProviders.of(this).get(EpubViewModel.class);
         initView();
+        initDocument();
+    }
 
-        List<Resource<EpubPage>> pageList = new ArrayList<>();
-        for (int i = 0; i < 60; i++) {
-            pageList.add(Resource.success(new EpubPage()));
-        }
-        mPagerAdapter.setPageList(pageList);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
+    private void initDocument() {
+//        List<Resource<EpubPage>> pageList = new ArrayList<>();
+//        for (int i = 0; i < 60; i++) {
+//            pageList.add(Resource.success(new EpubPage()));
+//        }
+//        mPagerAdapter.setPageList(pageList);
 
         Uri uri = getIntent().getData();
         String mimetype = getIntent().getType();
@@ -84,17 +111,43 @@ public class EpubActivity extends AppCompatActivity {
             return;
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int i = EpubDocument.get().setBackgroundColor(Color.WHITE);
-                int i2 = EpubDocument.get().setTextLevel(0);
-                EpubInfo info = EpubDocument.get().openDocument(path);
-                if (info == null) {
+        if (!closeDocument()) {
+            return;
+        }
 
-                }
-            }
-        }).start();
+        mViewModel.getInitDocumentResult().observe(this, mInitDocumentObserver);
+        mViewModel.getOpenDocumentResult().observe(this, mOpenDocumentObserver);
+        mViewModel.getLoadFileCountResult().observe(this, mLoadFileCountObserver);
+        mViewModel.getLoadPageCountByFileResult().observe(this, mLoadPageCountByFileObserver);
+        mViewModel.initDocument(path);
+    }
+
+    private void openDocument() {
+        EpubDocument.get().setOnEventListener(mOnEventListener);
+        DocumentBinding binding = mViewModel.getDocumentBinding();
+        binding.setDensity(getResources().getDisplayMetrics().density);
+        binding.setWidth(mDocumentPager.getWidth());
+        binding.setHeight(mDocumentPager.getHeight());
+        mViewModel.openDocument();
+    }
+
+    private void loadFileCount() {
+        mViewModel.loadFileCount();
+    }
+
+    private void loadPageCountByFile(int fileId) {
+        mViewModel.loadPageCountByFile(fileId);
+    }
+
+    private boolean closeDocument() {
+        try {
+            EpubDocument.get().nativeCloseDocument();
+            return true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     protected void initView() {
@@ -175,7 +228,10 @@ public class EpubActivity extends AppCompatActivity {
         mVpNavigation.setCurrentItem(0);
 
         // document
+        mPageContainer = findViewById(R.id.page_container);
         mDocumentPager = findViewById(R.id.document_pager);
+
+        mDocumentPager.setOnClickListener(mOnClickListener);
         mDocumentPager.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mDocumentPager.setHasFixedSize(true);
         PagerSnapHelper snapHelper = new PagerSnapHelper();
@@ -185,6 +241,12 @@ public class EpubActivity extends AppCompatActivity {
         mPagerAdapter.setPageListener(mPageListener);
         mDocumentPager.setAdapter(mPagerAdapter);
         mDocumentPager.addOnScrollListener(mOnPagerScrollListener);
+
+        // loading
+        mLoadingView = findViewById(R.id.pb_loading);
+        mLoadingView.setVisibility(View.GONE);
+        mTvMessage = findViewById(R.id.tv_message);
+        mTvMessage.setVisibility(View.GONE);
 
         // window
         if (EpubUtils.isSupportLayoutFullscreen()) {
@@ -236,6 +298,8 @@ public class EpubActivity extends AppCompatActivity {
                 onBackPressed();
             } else if (id == R.id.ib_right) {
                 popupMenu();
+            } else if (id == R.id.document_pager) {
+                switchBar();
             } else if (id == R.id.ib_navigation) {
                 if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -452,5 +516,123 @@ public class EpubActivity extends AppCompatActivity {
         super.onResume();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         hideBar();
+    }
+
+    private Observer<Resource<DocumentBinding>> mInitDocumentObserver = new Observer<Resource<DocumentBinding>>() {
+        @Override
+        public void onChanged(@Nullable Resource<DocumentBinding> resource) {
+            if (resource.isError()) {
+                mLoadingView.setVisibility(View.GONE);
+                mTvMessage.setText(resource.getMessage());
+                mTvMessage.setVisibility(View.VISIBLE);
+            } else if (resource.isLoading()) {
+                mLoadingView.setVisibility(View.VISIBLE);
+                mTvMessage.setVisibility(View.GONE);
+            } else if (resource.isSuccessful()) {
+                mLoadingView.setVisibility(View.GONE);
+                openDocument();
+            }
+        }
+    };
+
+    private Observer<Resource<Void>> mOpenDocumentObserver = new Observer<Resource<Void>>() {
+
+        @Override
+        public void onChanged(@Nullable Resource<Void> resource) {
+            if (resource.isError()) {
+                Log.i(EpubActivity.TAG, "open document failed");
+                mLoadingView.setVisibility(View.GONE);
+                mTvMessage.setText(resource.getMessage());
+                mTvMessage.setVisibility(View.VISIBLE);
+            } else if (resource.isLoading()) {
+                Log.i(EpubActivity.TAG, "open document");
+                mLoadingView.setVisibility(View.VISIBLE);
+                mTvMessage.setVisibility(View.GONE);
+            } else if (resource.isSuccessful()) {
+                Log.i(EpubActivity.TAG, "open document success");
+                mLoadingView.setVisibility(View.GONE);
+                loadFileCount();
+            }
+        }
+    };
+
+    private Observer<Resource<Integer>> mLoadFileCountObserver = new Observer<Resource<Integer>>() {
+        @Override
+        public void onChanged(@Nullable Resource<Integer> resource) {
+            if (resource.isError()) {
+                Log.i(EpubActivity.TAG, "load file count failed");
+                mLoadingView.setVisibility(View.GONE);
+                mTvMessage.setText(resource.getMessage());
+                mTvMessage.setVisibility(View.VISIBLE);
+            } else if (resource.isLoading()) {
+                Log.i(EpubActivity.TAG, "load file count");
+                mLoadingView.setVisibility(View.VISIBLE);
+                mTvMessage.setVisibility(View.GONE);
+            } else if (resource.isSuccessful()) {
+                mLoadingView.setVisibility(View.GONE);
+                Log.i(EpubActivity.TAG, "load file count success. file count = " + resource.getData());
+                mViewModel.getDocumentBinding().setFileCount(resource.getData());
+                loadPageCountByFile(1);
+            }
+        }
+    };
+
+    private Observer<Resource<EpubFile>> mLoadPageCountByFileObserver = new Observer<Resource<EpubFile>>() {
+        @Override
+        public void onChanged(@Nullable Resource<EpubFile> resource) {
+            if (resource.isError()) {
+                Log.i(EpubActivity.TAG, "load page count by file failed. file id = " + resource.getData().getId());
+                mLoadingView.setVisibility(View.GONE);
+                mTvMessage.setText(resource.getMessage());
+                mTvMessage.setVisibility(View.VISIBLE);
+            } else if (resource.isLoading()) {
+                Log.i(EpubActivity.TAG, "load page count by file. file id = " + resource.getData().getId());
+                mLoadingView.setVisibility(View.VISIBLE);
+                mTvMessage.setVisibility(View.GONE);
+            } else if (resource.isSuccessful()) {
+                Log.i(EpubActivity.TAG, "load page count by file success. file id = " + resource.getData().getId() + " page count = " + resource.getData().getPageCount());
+                mLoadingView.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    private OnEventListener mOnEventListener = new OnEventListener() {
+        @Override
+        public void onEvent(int event, String message) {
+            if (mEventHandler != null) {
+                Message msg = Message.obtain();
+                msg.what = event;
+                msg.obj = message;
+                mEventHandler.sendMessage(msg);
+            }
+        }
+    };
+
+    static class EventHandler extends Handler {
+        WeakReference<EpubActivity> mReference;
+
+        EventHandler(EpubActivity activity) {
+            mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            final EpubActivity activity = mReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.handleEvent(msg);
+            }
+        }
+    }
+
+    private void handleEvent(Message msg) {
+        int event = msg.what;
+        String message = (String) msg.obj;
+        Log.i(EpubActivity.TAG, "onEvent() event = " + event + " message = " + message);
+    }
+
+    @Override
+    public void finish() {
+        EpubDocument.get().nativeCloseDocument();
+        super.finish();
     }
 }
