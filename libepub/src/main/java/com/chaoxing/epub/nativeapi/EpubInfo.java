@@ -17,4 +17,18 @@ public class EpubInfo {
     EpubInfo() {
     }
 
+    @Override
+    public String toString() {
+        return "EpubInfo{" +
+                "title='" + title + '\'' +
+                ", creator='" + creator + '\'' +
+                ", description='" + description + '\'' +
+                ", language='" + language + '\'' +
+                ", contributor='" + contributor + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", subject='" + subject + '\'' +
+                ", identifier='" + identifier + '\'' +
+                '}';
+    }
+
 }
