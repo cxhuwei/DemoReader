@@ -649,20 +649,21 @@ Record CBook::GetChapterInforFromFilePath(string filepath) {
     } else
         chapterinfo.file.assign(szfilepath);
 
-    //���ê�� ��Ҫ����һ��html
-    if (m_unzFile) {
-        OpenFileByFilePath(chapterinfo.file);
+    map<string,MSI>::iterator pos = m_FIleAnchorContentNumber.find(chapterinfo.file);
+    if (pos == m_FIleAnchorContentNumber.end())
+    {
+        if (m_unzFile)
+        {
+            OpenFileByFilePath(chapterinfo.file);
+        }
     }
-
-
-    if (m_FIleAnchorContentNumber.size() > 0) {
-        map<string, MSI>::iterator pos = m_FIleAnchorContentNumber.find(chapterinfo.file);
-        if (pos != m_FIleAnchorContentNumber.end()) {
-            MSI tempmap = pos->second;
-            MSI::iterator pos2 = tempmap.find(anchorName);
-            if (pos2 != tempmap.end()) {
-                chapterinfo.contentNumber = pos2->second;
-            }
+    else
+    {
+        MSI tempmap =  pos->second;
+        MSI::iterator pos2 =tempmap.find(anchorName);
+        if (pos2 != tempmap.end())
+        {
+            chapterinfo.contentNumber = pos2->second;
         }
     }
     return chapterinfo;

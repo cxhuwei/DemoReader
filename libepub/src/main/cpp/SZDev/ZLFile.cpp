@@ -104,7 +104,7 @@ int CZLFile::PutFilePath(const char *filepath) {
     if (anchor != NULL) {
         m_isAnchor = true;
         length = anchor - filepath;
-        memset(m_anchorName, 0, SHORTNAME_LENGTH);//防止再赋值
+        memset(m_anchorName, 0, SHORTNAME_LENGTH);//锟斤拷止锟劫革拷值
         memcpy(m_anchorName, anchor + 1, strlen(filepath) - length - 1);
     } else {
         m_isAnchor = false;
@@ -115,7 +115,7 @@ int CZLFile::PutFilePath(const char *filepath) {
         if (temp) {
             memset(temp, 0, length + 1);
             memcpy(temp, filepath, length);
-            if (strcmp(temp, m_filePath) == 0) {//上次打开过了就不再打开
+            if (strcmp(temp, m_filePath) == 0) {//锟较次打开癸拷锟剿就诧拷锟劫达拷
                 delete[] temp;
                 temp = NULL;
                 return 1;
@@ -127,7 +127,7 @@ int CZLFile::PutFilePath(const char *filepath) {
 // 		delete[] m_filePath;
 // 		m_filePath = NULL;
     }
-    //使用临时文件保存当前路径，如果解压成功才更新m_filePath字段 myf 20141229
+    //使锟斤拷锟斤拷时锟侥硷拷锟斤拷锟芥当前路锟斤拷锟斤拷锟斤拷锟斤拷锟窖癸拷晒锟斤拷鸥锟斤拷锟絤_filePath锟街讹拷 myf 20141229
 // 	m_filePath = new char[length + 1];
 // 	if (m_filePath)
 // 	{
@@ -162,7 +162,7 @@ int CZLFile::OpenFile(const char *file, bool isCleanHtmlData /*= true*/,
     }
     m_isLastOpen = false;
 
-    if (0 != PutFilePath(file)) {//说明上次已经打开本文件了
+    if (0 != PutFilePath(file)) {//说锟斤拷锟较达拷锟窖撅拷锟津开憋拷锟侥硷拷锟斤拷
 
         m_isLastOpen = true;
         return OPENZIPFILE_LASTOPEN;
@@ -210,7 +210,7 @@ int CZLFile::OpenFile(const char *file, bool isCleanHtmlData /*= true*/,
     return OPENZIPFILE_OK;
 }
 
-// 返回文件的数据
+// 锟斤拷锟斤拷锟侥硷拷锟斤拷锟斤拷锟斤拷
 myBYTE *CZLFile::GetFileData(void) {
     return m_DataFile;
 }
@@ -219,11 +219,11 @@ int CZLFile::GetDataLength(void) {
     return m_DataLength;
 }
 
-// 解析该文件的html结构
+// 锟斤拷锟斤拷锟斤拷锟侥硷拷锟斤拷html锟结构
 int CZLFile::Parser(void) {
     LOGI("CZLFile::Parser | begin");
     int anchorNumber(0);
-    if (!m_isLastOpen) {//上次没打开过，进行解析
+    if (!m_isLastOpen) {//锟较达拷没锟津开癸拷锟斤拷锟斤拷锟叫斤拷锟斤拷
         LOGI("CZLFile::Parser | 1");
         CHtmlParser par(this->m_DataFile, this->m_DataLength, &m_vHtmlNode);
         LOGI("CZLFile::Parser | 2");
@@ -234,7 +234,7 @@ int CZLFile::Parser(void) {
         if (par.ParserHtml()) {
             LOGI("CZLFile::Parser | 5 1");
             m_HtmlTitle = par.m_title;
-            //把html内部css样式放到m_mcss里。
+            //锟斤拷html锟节诧拷css锟斤拷式锟脚碉拷m_mcss锟斤。
             m_MCSS = par.m_inlineMCSS;
             m_isHaveCSS = par.IsHaveCSS();
             LOGI("CZLFile::Parser | 5 2");
@@ -258,7 +258,7 @@ int CZLFile::Parser(void) {
             return -1;
         }
     }
-    if (m_isAnchor) {//需要找到锚点
+    if (m_isAnchor) {//锟斤拷要锟揭碉拷锚锟斤拷
         string anchorName(m_anchorName);
         map<string, int>::iterator pos = m_mAnchorNameContentNumber.find(anchorName);
         if (pos != m_mAnchorNameContentNumber.end()) {
@@ -368,7 +368,7 @@ void CZLFile::GetFrontStyleFormTag(HTMLTagType tagtype, Content *content) {
     }
 }
 
-// 把解析css对象中的样式放到zlfile的样式表中。
+// 锟窖斤拷锟斤拷css锟斤拷锟斤拷锟叫碉拷锟斤拷式锟脚碉拷zlfile锟斤拷锟斤拷式锟斤拷锟叫★拷
 void CZLFile::PutCssIntoFileCss(CStyleSheetParser &csspar) {
     map<string, StyleSheet>::iterator pos = csspar.m_MCSS.begin();
     for (; pos != csspar.m_MCSS.end(); pos++) {

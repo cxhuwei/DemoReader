@@ -131,6 +131,7 @@ void DoConverCallback(void *data, char *str, long status) {
  * Signature: (I)I
  */
 extern "C"
+{
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetForegroundColor
         (JNIEnv *env, jobject obj, jint color) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -149,7 +150,6 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetFo
  * Method:    nativeSetBackgroundColor
  * Signature: (I)I
  */
-extern "C"
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetBackgroundColor
         (JNIEnv *env, jobject obj, jint color) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -168,7 +168,6 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetBa
  * Method:    nativeSetFontResource
  * Signature: ([Ljava/lang/String;)I
  */
-extern "C"
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetFontResource
         (JNIEnv *env, jobject obj, jobjectArray fontArray) {
 
@@ -198,7 +197,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetFo
 
     const char *ep = strrchr(c_szEnglishFontPath, '/');
     if (ep) {
-        bool re = bookReader->SetChineseFont(ep, c_szEnglishFontPath);
+        bool re = bookReader->SetEnglishFont(ep, c_szEnglishFontPath);
         if (!re) {
             reNum = 5;
         }
@@ -216,7 +215,6 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetFo
  * Method:    nativeSetTextLevel
  * Signature: (I)I
  */
-extern "C"
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetTextLevel
         (JNIEnv *env, jobject obj, jint zoom) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -229,7 +227,6 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeSetTe
  * Method:    nativeLayout
  * Signature: (IIIIIIF)Z
  */
-extern "C"
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeLayout
         (JNIEnv *env, jobject obj, jint width, jint height, jint mrginLeft, jint mrginTop,
          jint mrginRight, jint mrginBottom, jfloat density) {
@@ -253,7 +250,6 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeLayou
  * Method:    nativeOpenDocument
  * Signature: (Ljava/lang/String;)Lcom/chaoxing/epub/nativeapi/EpubInfo;
  */
-extern "C"
 JNIEXPORT jobject JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeOpenDocument
         (JNIEnv *env, jobject obj, jstring bookPath) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -305,7 +301,6 @@ JNIEXPORT jobject JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeOp
  * Method:    nativeGetCatalog
  * Signature: ()[Lcom/chaoxing/epub/nativeapi/Catalog;
  */
-extern "C"
 JNIEXPORT jobjectArray JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeGetCatalog
         (JNIEnv *env, jobject obj) {
     jobjectArray objArray = NULL;
@@ -366,7 +361,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nat
  * Method:    nativeGetFileCount
  * Signature: ()I
  */
-extern "C"
+
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeGetFileCount
         (JNIEnv *env, jobject obj) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -378,7 +373,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeGetFi
  * Method:    nativeGetPageCountByFile
  * Signature: (I)I
  */
-extern "C"
+
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeGetPageCountByFile
         (JNIEnv *env, jobject obj, jint fileid) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -391,7 +386,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeGetPa
  * Method:    nativeLocateCatalog
  * Signature: (I)[I
  */
-extern "C"
+
 JNIEXPORT jintArray JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeLocateCatalog
         (JNIEnv *, jobject, jint) {
     jintArray a;
@@ -403,7 +398,7 @@ JNIEXPORT jintArray JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_native
  * Method:    nativeDrawPage
  * Signature: (IILandroid/graphics/Bitmap;)I
  */
-extern "C"
+
 JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawPage
         (JNIEnv *env, jobject obj, jint fileid, jint smallPageNumber, jobject bitmapObj) {
     SZEbookReader *bookReader = GetBookReader(env, obj);
@@ -461,7 +456,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
  * Method:    nativeCloseDocument
  * Signature: ()V
  */
-extern "C"
+
 JNIEXPORT void JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeCloseDocument
         (JNIEnv *env, jobject obj) {
     LOGI("nativeCloseDocument");
@@ -470,4 +465,5 @@ JNIEXPORT void JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeClose
 
     ReleaseBookReader();
 
+}
 }
