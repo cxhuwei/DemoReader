@@ -8,6 +8,13 @@ public class EpubFile {
     private int id;
     private int pageCount;
 
+    public EpubFile() {
+    }
+
+    public EpubFile(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

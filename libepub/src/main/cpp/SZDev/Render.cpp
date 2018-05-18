@@ -3,11 +3,17 @@
 #include "MAlgorithm.h"
 
 #include <android/log.h>
+
+#ifndef LOG_TAG
 #define LOG_TAG "PDGPARSER"
-#define LOGI(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG ,__VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG ,__VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,LOG_TAG ,__VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG ,__VA_ARGS__)
+#endif
 
 
-const float g_Paragraph = 2.5;//¶Î¼ä¾àÊÇÐÐ¼ä¾àµÄ±¶Êý
+const float g_Paragraph = 2.5;//ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
 CRender::CRender(void)
 {
 	m_PrevWordCharIndex = 0;
@@ -16,7 +22,7 @@ CRender::CRender(void)
 	m_nMrginRight = 50;
 	m_nMrginTop = 50;
 	m_nMrginBottom = 50;
-	m_nTabSize = 2;//Ëõ½ø£¨2¸ö×ÖµÄ¿í¶È£©
+	m_nTabSize = 2;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ÖµÄ¿ï¿½È£ï¿½
 	m_nWordSpac = 1;
 	m_nVertSpac = 0.6;
     m_nParagraphSpac = 0.6;//m_nVertSpac * g_Paragraph;
@@ -68,10 +74,10 @@ void CRender::Init( int iWidth, int iHeight,myDWORD nFormat,myRGBQUAD clrFG )
 }
 
 /* 
-	beginPos £º¸ÃcontentÖÐ£¬´ÓbeginPos¿ªÊ¼»æÖÆ
-	endpos: ·µ»Ø¸øÉÏ²ã£¬¸ÃcontentÖÐ£¬»æÖÆµÄ×îºóÒ»¸öÎ»ÖÃ
-	endpos :-2 ¸Ãcontent»æÖÆÍêÁË
-	endpos :-1 ¸Ãcontent»¹Ã»ÓÐ»æÖÆ£¬offsetyÒÑ¾­³¬¹ý·¶Î§ÁË¡£
+	beginPos ï¿½ï¿½ï¿½ï¿½contentï¿½Ð£ï¿½ï¿½ï¿½beginPosï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+	endpos: ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ï²ã£¬ï¿½ï¿½contentï¿½Ð£ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
+	endpos :-2 ï¿½ï¿½contentï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	endpos :-1 ï¿½ï¿½contentï¿½ï¿½Ã»ï¿½Ð»ï¿½ï¿½Æ£ï¿½offsetyï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½Ë¡ï¿½
 
 */
 int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont,int contentId,Content* content,int beginPos,int& endPos ,pageWordinfo* pwi,Vt_curPageMultiMedia* cpmm,bool isRender)
@@ -80,12 +86,12 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 	{
 		return -1;
 	}
-	int nCFullW=pChiFont->GetFullWidthAdvanceCH();//ÖÐÎÄÕû×Ö¿í¶È
-	int nCHalfW=pChiFont->GetHalfWidthAdvanceCH();//ÖÐÎÄ°ë×Ö¿í¶È
-	int nEFullW=pEngFont->GetFullWidthAdvance();//Ó¢ÎÄÕû×Ö¿í¶È
-	int nEHalfW=pEngFont->GetHalfWidthAdvance();//Ó¢ÎÄÕû×Ö¿í¶È
+	int nCFullW=pChiFont->GetFullWidthAdvanceCH();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nCHalfW=pChiFont->GetHalfWidthAdvanceCH();//ï¿½ï¿½ï¿½Ä°ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nEFullW=pEngFont->GetFullWidthAdvance();//Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nEHalfW=pEngFont->GetHalfWidthAdvance();//Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
 
-	//°ÑcontentÖÐµÄÎÄ±¾×ª³Éµ½Ò»¸ö×Ö·û´®ÖÐ
+	//ï¿½ï¿½contentï¿½Ðµï¿½ï¿½Ä±ï¿½×ªï¿½Éµï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 	std::wstring strText = L"";
 	std::wstring strLineText = L"";
 	if (content->before != NULL)
@@ -100,8 +106,8 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 	if (content->isP_start && content->textStyle.textAlign == LEFT)
 	{
 		if (content->before == NULL && beginPos == 0)
-		{//Èç¹û¶ÎÂäÇ°Ãæ±¾ÉíÃ»ÓÐËõ½ø£¬ÄÇÃ´ÊÖ¶¯Ôö¼ÓËõ½ø
-			//strText.insert(0,L"\t");//¿ªÊ¼Ôö¼ÓÒ»¸öÖÆ±í·û
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½æ±¾ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			//strText.insert(0,L"\t");//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Æ±ï¿½ï¿½
 			m_OffsetX += ((nCFullW + m_nWordSpac) * m_nTabSize);
 		}
 		if (content->before!= NULL)
@@ -117,9 +123,9 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 		strText += L"\n";
 	}
 
-	//¿ªÊ¼»æÖÆ
+	//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 
-	//ÑùÊ½
+	//ï¿½ï¿½Ê½
 	if (content->isHaveStyle)
 	{
 		pChiFont->SetIsBold(content->textStyle.Bold);
@@ -128,12 +134,12 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 		pEngFont->SetIsItalic(content->textStyle.isItalic);
 	}
 
-	int drawX = m_OffsetX;//m_offsetX¼ÇÂ¼ÁËÉÏ´Î»æÖÆµÄºá×ø±ê
-	//int drawY = m_OffsetY;//m_offsetY¼ÇÂ¼ÁËÉÏ´Î»æÖÆµÄ×Ý×ø±ê
+	int drawX = m_OffsetX;//m_offsetXï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ï´Î»ï¿½ï¿½ÆµÄºï¿½ï¿½ï¿½ï¿½ï¿½
+	//int drawY = m_OffsetY;//m_offsetYï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ï´Î»ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	int textLength,blankLenght;
 	int tempPrevWordIndex = m_PrevWordCharIndex;
-	int deleteCount(0);//×îÖÕÐèÒªÉ¾³ýµÄword¸öÊý
+	int deleteCount(0);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÉ¾ï¿½ï¿½ï¿½ï¿½wordï¿½ï¿½ï¿½ï¿½
 	if ((m_OffsetY + nCFullW)> (m_OutDevH - m_nMrginBottom))
 	{
 		endPos--;
@@ -141,7 +147,7 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 		m_OffsetY = m_nMrginTop;
 		return 0;
 	}
-	//µÚÒ»²½£¬Í³¼ÆÒ»ÐÐÄÜ·ÅµÃÏÂµÄËùÓÐ×Ö
+	//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ü·Åµï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int offset = beginPos;
 	wchar_t temp;
 	for (endPos = beginPos; endPos < strText.length(); endPos++)
@@ -158,7 +164,7 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 		myWORD nowWchar = strText[endPos];
 		temp = strText[endPos];
 		if (nowWchar == 0x0a || nowWchar == 0x0d)
-		{//Ö÷¶¯»»ÐÐ
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			//strLineText += nowWchar;
 			if (strLineText.length() > 0 && !isRender)
 			{
@@ -183,16 +189,16 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 				offset = endPos;
 				strLineText = L"";
 			}
-			//°Ñ»æÖÆ×ø±êÒÆ¶¯µ½ÏÂÒ»ÐÐ
+			//ï¿½Ñ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 			drawX = m_OffsetX = m_nMrginLeft;
-			m_OffsetY += (m_curLineMaxHeight/*nEFullW*/ + m_nParagraphSpac*nCFullW/*m_nVertSpac * g_Paragraph*/);//¶ÎÂäÖ®¼äÓÃ2±¶ÐÐ¾à×ö¶Î¼ä¾à
+			m_OffsetY += (m_curLineMaxHeight/*nEFullW*/ + m_nParagraphSpac*nCFullW/*m_nVertSpac * g_Paragraph*/);//ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½Î¼ï¿½ï¿½
 			m_curLineMaxHeight = 0;
 			if (m_OffsetY > (m_OutDevH - m_nMrginBottom - nEFullW))
-			{//¸ÃÒ³»æÖÆÂúÁË
+			{//ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				m_OffsetY = m_nMrginTop;
 				m_OffsetX = m_nMrginLeft;
 				if (endPos == strText.length() - 1)
-				{//×îºóÒ»¸ö
+				{//ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 					endPos = -2;
 				}
 				return 0;
@@ -205,7 +211,7 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 			{
 				drawX += (nCHalfW + m_nWordSpac);
 			}
-			else if (nowWchar == 0x3000)//L'¡¡'
+			else if (nowWchar == 0x3000)//L'ï¿½ï¿½'
 			{
 				drawX += (nCFullW + m_nWordSpac);
 			}
@@ -236,11 +242,11 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 						else
 						{
 						int BW(0),lk(0),rk(0);
-						//¹æÔò:±êµãÕ¼×Ö¿íµÄ2/3¡£×ó±êµã¾Ó×óÕ¼Ê£Óà¿Õ°×µÄ1/4,¾ÓÓÒÕ¼3/4¡£ÓÒ±êµã¸ú×ó±êµãÏà·´
+						//ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½Õ¼ï¿½Ö¿ï¿½ï¿½2/3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼Ê£ï¿½ï¿½Õ°×µï¿½1/4,ï¿½ï¿½ï¿½ï¿½Õ¼3/4ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à·´
 						if (CLR < 3)
 						{
 							BW = CalcFloat(pNode->charAdvance,(float)2/3);
-							// ÓÒ±êµãÐèÒªÔÚ»­Ö®Ç°½øÐÐµ÷Õû
+							// ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Òªï¿½Ú»ï¿½Ö®Ç°ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½
 							float times = (CLR == 1)?((float)1/4):((float)3/4);
 							lk = CalcFloat(BW - pNode->w,times);
 							rk = BW - pNode->w - lk;
@@ -252,8 +258,8 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 							drawX += m_nWordSpac;
 						drawX += rk;
 // 						if (CLR == 1)
-// 						{//×ó±ß±êµã
-// 							drawX += pNode->x;//°ÑÊµ¼Ê±êµã¾àÀë×ó±ß¿ò¾àÀëÔö¼Óµ½±êµãÖ®ºó£¬Ôö¼ÓÓëÏÂÒ»¸ö×ÖµÄ¾àÀë
+// 						{//ï¿½ï¿½ß±ï¿½ï¿½
+// 							drawX += pNode->x;//ï¿½ï¿½Êµï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ÖµÄ¾ï¿½ï¿½ï¿½
 // 						}
 							
 						}
@@ -262,7 +268,7 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 			}
 
 			if (drawX > (m_OutDevW - m_nMrginRight))
-			{//ÐÐ»æÖÆµ½Ä©Î²ÁË£¬ÐèÒª»»ÐÐÁË
+			{//ï¿½Ð»ï¿½ï¿½Æµï¿½Ä©Î²ï¿½Ë£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (content->textStyle.textAlign == CENTER && m_OffsetX == m_nMrginLeft)
 				{
 					textLength = drawX - m_OffsetX;
@@ -286,7 +292,7 @@ int CRender::DrawContentText( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* p
 				{
 					goto drawline;
 				}
-				//Õë¶Ô±êµã½øÐÐÐÐ×Öµ÷Õû
+				//ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
 				
 				// 				int overage = m_OutDevW-m_nMrginRight - lastWordDrawX;
 				Punctuation(strText,endPos,strLineText,deleteCount);
@@ -303,12 +309,12 @@ drawline:		if (!isRender)
 				
 				endPos--;
 				
-				//°Ñ»æÖÆ×ø±êÒÆ¶¯µ½ÏÂÒ»ÐÐ
+				//ï¿½Ñ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 				drawX = m_OffsetX = m_nMrginLeft;
 				m_OffsetY += (m_curLineMaxHeight/*nEFullW*/ + m_nVertSpac*nCFullW);
 				m_curLineMaxHeight = 0;
 				if (m_OffsetY > (m_OutDevH - m_nMrginBottom - nEFullW))
-				{//¸ÃÒ³»æÖÆÂúÁË
+				{//ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					m_OffsetY = m_nMrginTop;
 					m_OffsetX = m_nMrginLeft;
 					return 0;
@@ -330,7 +336,7 @@ drawline:		if (!isRender)
 	if (strLineText.length() > 0)
 	{
 		m_PrevWordCharIndex = tempPrevWordIndex;
-		//µ±Ç°contentÖÐÊ£ÓàµÄ
+		//ï¿½ï¿½Ç°contentï¿½ï¿½Ê£ï¿½ï¿½ï¿½
 		if (isRender)
 		{
 			m_OffsetX = drawX;
@@ -342,25 +348,25 @@ drawline:		if (!isRender)
 			offset = endPos;
 		}
 	}
-	endPos = -2;//±ê¼Ç¸ÃcontentÈ«²¿»æÖÆÍê
+	endPos = -2;//ï¿½ï¿½Ç¸ï¿½contentÈ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	return 1;
 }
 
 
 void CRender::Punctuation( std::wstring strFull,int index,std::wstring& strLine,int& deleteCount)
 {
-	//index  ÒÑ¾­³¬¹ý±ß½çµÄÄÇ¸ö×Ö·ûµÄË÷Òý
+	//index  ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	myWORD nowWchar;
 	myWORD beforWchar;
 	wstring temp = strLine;
-	deleteCount = 0;//×îºó³¬¹ý±ß½çµÄÄÇ¸ö×Ö·û£¬Ã»ÓÐ·ÅÈëµ½strLineÖÐ
+	deleteCount = 0;//ï¿½ï¿½ó³¬¹ï¿½ï¿½ß½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ëµ½strLineï¿½ï¿½
 	if (index <= 0 || index >= strFull.size())
 	{
 		return;
 	}
 	nowWchar = strFull[index];
 
-	//³¬¹ý·¶Î§µÄ×îºóÒ»¸öÊÇÓ¢ÎÄ ´¦Àí·½·¨£¬°ÑÇ°ÃæÒ»¸ö×ÖÄ¸Ò²É¾µô£¬¼ÓÒ»¸öºá¸Ü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ä¸Ò²É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (returnCharLeftRight(nowWchar) >= 3)
 	{
 		if (index - 1 > 0)
@@ -374,7 +380,7 @@ void CRender::Punctuation( std::wstring strFull,int index,std::wstring& strLine,
 		}
 	}
 	if(returnCharType(nowWchar) == 1)
-	{//¾äÄ©±êµã;¾äÄ©±êµã²»ÄÜ³öÏÖÔÚÐÐÊ×£¬ËùÒÔÐèÒª°ÑÇ°Ò»¸ö×Ö·û¸úµ±Ç°×Ö·ûÒ»Æð·Åµ½ÏÂÒ»ÐÐ
+	{//ï¿½ï¿½Ä©ï¿½ï¿½ï¿½;ï¿½ï¿½Ä©ï¿½ï¿½ã²»ï¿½Ü³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½Ö·ï¿½Ò»ï¿½ï¿½Åµï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 		deleteCount++;
 		strLine.erase(strLine.size()-1,1);
 		if (strLine == L"")
@@ -406,7 +412,7 @@ void CRender::Punctuation( std::wstring strFull,int index,std::wstring& strLine,
 		}
 	}
 	
-	//¼ì²â´®×îºóÒ»¸ö×Ö·ûÊÇ²»ÊÇ¾äÊ×±êµã
+	//ï¿½ï¿½â´®ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Ç²ï¿½ï¿½Ç¾ï¿½ï¿½×±ï¿½ï¿½
 	
 	index = strLine.size();
 	if (index == 0)
@@ -432,10 +438,10 @@ void CRender::Punctuation( std::wstring strFull,int index,std::wstring& strLine,
 
 }
 /*
-	drawX:»æÖÆ¸ÃÐÐµÄÆðÊ¼ºá×ø±ê
-	drawY:»æÖÆ¸ÃÐÐµÄÆðÊ¼×Ý×ø±ê
-	strX:¸ÃÐÐ»æÖÆµÄÓÒ¶Ëºá×ø±ê
-	wordCountInstr:×Ö·û´®ÖÐ×ÖµÄ¸öÊý
+	drawX:ï¿½ï¿½ï¿½Æ¸ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	drawY:ï¿½ï¿½ï¿½Æ¸ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	strX:ï¿½ï¿½ï¿½Ð»ï¿½ï¿½Æµï¿½ï¿½Ò¶Ëºï¿½ï¿½ï¿½ï¿½ï¿½
+	wordCountInstr:ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÄ¸ï¿½ï¿½ï¿½
 */
 int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont,int& drawX,int& drawY
 					  ,std::wstring str,int contentId,Content* content ,int beginPos,pageWordinfo* pwi
@@ -454,23 +460,23 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 		return -3;
 	}
 
-	int nCFullW=pChiFont->GetFullWidthAdvanceCH();//ÖÐÎÄÕû×Ö¿í¶È
-	int nCHalfW=pChiFont->GetHalfWidthAdvanceCH();//ÖÐÎÄ°ë×Ö¿í¶È
-	int nEFullW=pEngFont->GetFullWidthAdvance();//Ó¢ÎÄÕû×Ö¿í¶È
-	int nEHalfW=pEngFont->GetHalfWidthAdvance();//Ó¢ÎÄÕû×Ö¿í¶È
+	int nCFullW=pChiFont->GetFullWidthAdvanceCH();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nCHalfW=pChiFont->GetHalfWidthAdvanceCH();//ï¿½ï¿½ï¿½Ä°ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nEFullW=pEngFont->GetFullWidthAdvance();//Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
+	int nEHalfW=pEngFont->GetHalfWidthAdvance();//Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½
 
-	//Á½¶Ë¶ÔÆë£¬Ô¤ÅÅ°æ
+	//ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ë£¬Ô¤ï¿½Å°ï¿½
 	int beginX = drawX;
 	int countLength = m_OffsetX;
 	int zijianju = m_nWordSpac;
-	int tianchong(0);//Æ½¾ù¾ùÌ¯µ½Ç°n¸ö×Ö¼ä¾àÒ»¸öÏñËØ
+	int tianchong(0);//Æ½ï¿½ï¿½ï¿½ï¿½Ì¯ï¿½ï¿½Ç°nï¿½ï¿½ï¿½Ö¼ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool lastWordIsEng(false);
-	int lineWordCount = 0;//¼ÇÂ¼Ò»ÐÐÀïÃæµÄÎÄ×Ö¸öÊý(²»°üÀ¨¿Õ¸ñ£¬ÖÆ±í·û£¬»»ÐÐ·û,Ó¢ÎÄµ¥´ÊËãÒ»¸ö)
+	int lineWordCount = 0;//ï¿½ï¿½Â¼Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½,Ó¢ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½)
 	int tempPrevWordIndex = m_PrevWordCharIndex;
-	bool lineTopKong = true;//ÐÐÊ×µÄ¿Õ¸ñÈ¥µô
-	if (!(str[str.length() - 1] == L'\n' || !isNeedJustify))//1¡£strÓÐ»»ÐÐ·û²»ÐèÒªÁ½¶Ë¶ÔÆë£»2.Ö÷¶¯±ê¼Ç²»ÐèÒª¶ÔÆë
+	bool lineTopKong = true;//ï¿½ï¿½ï¿½×µÄ¿Õ¸ï¿½È¥ï¿½ï¿½
+	if (!(str[str.length() - 1] == L'\n' || !isNeedJustify))//1ï¿½ï¿½strï¿½Ð»ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ë£»2.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 	{
-		//Ö÷¶¯»»ÐÐ²»ÐèÒªÁ½¶Ë¶ÔÆë
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½
 		for(int i = 0; i < str.length(); i++)
 		{
 			if (m_iStop)
@@ -492,7 +498,7 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 					lastWordIsEng = false;
 				}
 				break;			
-			case 0x3000	:	//L'¡¡'
+			case 0x3000	:	//L'ï¿½ï¿½'
 // 				if (lineTopKong)
 // 				{
 // 					break;
@@ -538,11 +544,11 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 					else
 					{
 						int BW(0),lk(0),rk(0);
-						//¹æÔò:±êµãÕ¼×Ö¿íµÄ2/3¡£×ó±êµã¾Ó×óÕ¼Ê£Óà¿Õ°×µÄ1/4,¾ÓÓÒÕ¼3/4¡£ÓÒ±êµã¸ú×ó±êµãÏà·´
+						//ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½Õ¼ï¿½Ö¿ï¿½ï¿½2/3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼Ê£ï¿½ï¿½Õ°×µï¿½1/4,ï¿½ï¿½ï¿½ï¿½Õ¼3/4ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à·´
 						if (CLR < 3)
 						{
 							BW = CalcFloat(pNode->charAdvance,(float)2/3);
-							// ÓÒ±êµãÐèÒªÔÚ»­Ö®Ç°½øÐÐµ÷Õû
+							// ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Òªï¿½Ú»ï¿½Ö®Ç°ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½
 							float times = (CLR == 1)?((float)1/4):((float)3/4);
 							lk = CalcFloat(BW - pNode->w,times);
 							rk = BW - pNode->w - lk;
@@ -554,8 +560,8 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 						countLength += m_nWordSpac;
 						countLength += rk;
 // 						if (CLR == 1)
-// 						{//×ó±ß±êµã
-// 							countLength += pNode->x;//°ÑÊµ¼Ê±êµã¾àÀë×ó±ß¿ò¾àÀëÔö¼Óµ½±êµãÖ®ºó£¬Ôö¼ÓÓëÏÂÒ»¸ö×ÖµÄ?àÀ?
+// 						{//ï¿½ï¿½ß±ï¿½ï¿½
+// 							countLength += pNode->x;//ï¿½ï¿½Êµï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Öµï¿½?ï¿½ï¿½?
 // 						}
 						tempPrevWordIndex = m_NowWordCharIndex;
 					}
@@ -580,7 +586,7 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 	
 	MultimediaPage mp;
 
-	myRGBQUAD fontColor = m_clrForeG;//×ÖÌåÑÕÉ«
+	myRGBQUAD fontColor = m_clrForeG;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 	if (content->isHaveStyle && content->textStyle.isFontColor)
 	{
 //        if (content->textStyle.fontColor.rgbRed != 0 || content->textStyle.fontColor.rgbGreen != 0|| content->textStyle.fontColor.rgbBlue != 0) {
@@ -596,11 +602,11 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 	int tempDrawY = drawY;
     int underlineHeight = 0;
 	if (content->contentType & CT_SUP)
-	{//ÉÏ±ê ×Ý×ø±êÍùÉÏÒÆ¶¯°ë¸ö×Ö¸ß
+	{//ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½
 		tempDrawY -= nCHalfW;
 	}
 	if (content->contentType & CT_Link)
-	{//Á´½Ó Èç¹ûÃ»ÓÐ¶¨ÒåÁ´½Ó×Ô¼ºÑÕÉ«£¬¾ÍÊ¹ÓÃÄ¬ÈÏÑÕÉ«
+	{//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½É«
 		if (!content->isHaveStyle || (content->isHaveStyle && !content->textStyle.isFontColor))
 		{
             fontColor.rgbBlue = 255;
@@ -617,7 +623,7 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 // 		mp->data = new myBYTE[len + 1];
 // 		strcpy((char*)mp->data,content->filepath.c_str());
 	}
-	//¿ªÊ¼»­
+	//ï¿½ï¿½Ê¼ï¿½ï¿½
 
 	if (drawY > m_PreWordinfo.y + nCFullW)
 	{
@@ -675,7 +681,7 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 				continue;;
 			}
 			break;			
-		case 0x3000	:	//L'¡¡'
+		case 0x3000	:	//L'ï¿½ï¿½'
 // 			if (lineTopKong)
 // 			{
 // 				break;
@@ -749,11 +755,11 @@ int CRender::DrawLine( SZImageBit24& image,SZFTFont* pChiFont,SZFTFont* pEngFont
 				{
 					wchar_t c = nowWchar;
 					int BW(0),lk(0),rk(0);
-					//¹æÔò:±êµãÕ¼×Ö¿íµÄ2/3¡£×ó±êµã¾Ó×óÕ¼Ê£Óà¿Õ°×µÄ1/4,¾ÓÓÒÕ¼3/4¡£ÓÒ±êµã¸ú×ó±êµãÏà·´
+					//ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½Õ¼ï¿½Ö¿ï¿½ï¿½2/3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼Ê£ï¿½ï¿½Õ°×µï¿½1/4,ï¿½ï¿½ï¿½ï¿½Õ¼3/4ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à·´
 					if (CLR < 3)
 					{
 						BW = CalcFloat(pNode->charAdvance,(float)2/3);
-						// ÓÒ±êµãÐèÒªÔÚ»­Ö®Ç°½øÐÐµ÷Õû
+						// ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Òªï¿½Ú»ï¿½Ö®Ç°ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½
 						float times = (CLR == 1)?((float)1/4):((float)3/4);
 						lk = CalcFloat(BW - pNode->w,times);
 						rk = BW - pNode->w - lk;
@@ -866,7 +872,7 @@ int CRender::DrawContentImage( SZImageBit24& pageImage,SZImageBase* image,Conten
 	{
 		return -2;
 	}
-	//ÔÝÊ±Í¼Æ¬Ë®Æ½¾ÓÖÐÏÔÊ¾
+	//ï¿½ï¿½Ê±Í¼Æ¬Ë®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 	if (!isRender)
 	{
 		int offsetX = m_OffsetX + (drawW - imageW)/2;
@@ -892,7 +898,7 @@ int CRender::DrawContentImage( SZImageBit24& pageImage,SZImageBase* image,Conten
 	
 	m_OffsetY += (imageH + m_nVertSpac);
 	if (m_OffsetY > (m_OutDevH - m_nMrginBottom))
-	{//¸ÃÒ³»æÖÆÂúÁË
+	{//ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_OffsetY = m_nMrginTop;
 		m_OffsetX = m_nMrginLeft;
 		return 0;
@@ -962,7 +968,7 @@ int CRender::DrawHighLight( SZImageBit24& image, SZFTFont* pChiFont,SZFTFont* pE
 		height = lineMaxY - liney;
 		DrawBackGround(image,linex,liney,width,height,bgColor);
 	}
-	//Ð´×Ö
+	//Ð´ï¿½ï¿½
 drawWord:
 	int nFullW;
 	nFullW =pChiFont->GetFullWidthAdvanceCH();
@@ -1016,7 +1022,7 @@ int CRender::DrawBackGround( SZImageBit24 &Image,int x,int y,int width,int heigh
 	{
 		for (j=0;j<height;j++)
 		{
-			Image.SetDesPixel(x + i,ImgH - m_nVertSpac/2 - (y + j),bgColor,255);//´Ë´¦µÄ3ÊÇÎ¢µ÷×Ý×ø±ê
+			Image.SetDesPixel(x + i,ImgH - m_nVertSpac/2 - (y + j),bgColor,255);//ï¿½Ë´ï¿½ï¿½ï¿½3ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 	return 0;

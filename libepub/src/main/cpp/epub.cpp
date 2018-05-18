@@ -10,8 +10,13 @@
 
 #include <android/log.h>
 
+#ifndef LOG_TAG
 #define LOG_TAG "EPUB_PARSER"
-#define LOGI(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG ,__VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG ,__VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,LOG_TAG ,__VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG ,__VA_ARGS__)
+#endif
 
 #define RGBA_A(p) (((p) & 0xFF000000) >> 24)
 #define RGBA_R(p) (((p) & 0x00FF0000) >> 16)
@@ -272,12 +277,16 @@ JNIEXPORT jobject JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeOp
 
         jfieldID fieldTitle = env->GetFieldID(jEpubInfoClass, "title", "Ljava/lang/String;");
         jfieldID fieldCreator = env->GetFieldID(jEpubInfoClass, "creator", "Ljava/lang/String;");
-        jfieldID fieldDescription = env->GetFieldID(jEpubInfoClass, "description", "Ljava/lang/String;");
+        jfieldID fieldDescription = env->GetFieldID(jEpubInfoClass, "description",
+                                                    "Ljava/lang/String;");
         jfieldID fieldLanguage = env->GetFieldID(jEpubInfoClass, "language", "Ljava/lang/String;");
-        jfieldID fieldContributor = env->GetFieldID(jEpubInfoClass, "contributor", "Ljava/lang/String;");
-        jfieldID fieldPublisher = env->GetFieldID(jEpubInfoClass, "publisher", "Ljava/lang/String;");
+        jfieldID fieldContributor = env->GetFieldID(jEpubInfoClass, "contributor",
+                                                    "Ljava/lang/String;");
+        jfieldID fieldPublisher = env->GetFieldID(jEpubInfoClass, "publisher",
+                                                  "Ljava/lang/String;");
         jfieldID fieldSubject = env->GetFieldID(jEpubInfoClass, "subject", "Ljava/lang/String;");
-        jfieldID fieldIdentifier = env->GetFieldID(jEpubInfoClass, "identifier", "Ljava/lang/String;");
+        jfieldID fieldIdentifier = env->GetFieldID(jEpubInfoClass, "identifier",
+                                                   "Ljava/lang/String;");
 
         //env->SetObjectField(epubInfo, fieldAuthor, )
 
@@ -455,6 +464,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
 extern "C"
 JNIEXPORT void JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeCloseDocument
         (JNIEnv *env, jobject obj) {
+    LOGI("nativeCloseDocument");
     SZEbookReader *bookReader = GetBookReader(env, obj);
     bookReader->CloseEbook();
 

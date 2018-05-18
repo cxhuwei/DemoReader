@@ -36,14 +36,14 @@ public abstract class ExecuteBoundResource<Params, Result> {
     }
 
     @MainThread
-    private void setValue(Resource<Result> newValue) {
+    protected void setValue(Resource<Result> newValue) {
         if (!EpubUtils.equals(result.getValue(), newValue)) {
             result.setValue(newValue);
         }
     }
 
     protected void onReady(Params params) {
-        result.setValue(Resource.loading(null));
+        setValue(Resource.loading(null));
     }
 
     public final LiveData<Resource<Result>> execute(Params params) {

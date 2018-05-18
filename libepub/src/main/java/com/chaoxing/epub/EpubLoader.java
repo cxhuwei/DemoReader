@@ -127,6 +127,12 @@ public class EpubLoader {
 
     public LiveData<Resource<EpubFile>> loadPageCountByFile(int fileId) {
         ExecuteBoundResource<Integer, EpubFile> exexute = new ExecuteBoundResource<Integer, EpubFile>() {
+
+            @Override
+            protected void onReady(Integer id) {
+                setValue(Resource.loading(new EpubFile(id)));
+            }
+
             @NonNull
             @Override
             protected Resource<EpubFile> onExecute(Integer id) {
