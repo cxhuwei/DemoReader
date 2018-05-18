@@ -30,7 +30,7 @@ public abstract class ExecuteBoundResource<Params, Result> {
         public void subscribe(ObservableEmitter<Resource<Result>> emitter) throws Exception {
             emitter.onNext(onExecute(params));
         }
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
 
     public ExecuteBoundResource() {
     }

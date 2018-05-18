@@ -95,11 +95,11 @@ public class EpubActivity extends AppCompatActivity {
     }
 
     private void initDocument() {
-//        List<Resource<EpubPage>> pageList = new ArrayList<>();
-//        for (int i = 0; i < 60; i++) {
-//            pageList.add(Resource.success(new EpubPage()));
-//        }
-//        mPagerAdapter.setPageList(pageList);
+        List<Resource<EpubPage>> pageList = new ArrayList<>();
+        for (int i = 0; i < 60; i++) {
+            pageList.add(Resource.success(new EpubPage()));
+        }
+        mPagerAdapter.setPageList(pageList);
 
         Uri uri = getIntent().getData();
         String mimetype = getIntent().getType();
@@ -263,11 +263,9 @@ public class EpubActivity extends AppCompatActivity {
         mToolbar.setVisibility(View.GONE);
         mBottomBar.setVisibility(View.GONE);
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mOnSystemUiVisibilityChangeListener);
-        notifyPageCountChanged();
     }
 
     private void notifyPageCountChanged() {
-
         checkEmptyAdapter();
     }
 
@@ -570,7 +568,8 @@ public class EpubActivity extends AppCompatActivity {
             } else if (resource.isSuccessful()) {
                 Log.i(EpubActivity.TAG, "open document success");
                 mLoadingView.setVisibility(View.GONE);
-                loadFileCount();
+                notifyPageCountChanged();
+//                loadFileCount();
             }
         }
     };
@@ -647,6 +646,9 @@ public class EpubActivity extends AppCompatActivity {
         int event = msg.what;
         String message = (String) msg.obj;
         Log.i(EpubActivity.TAG, "onEvent() event = " + event + " message = " + message);
+        if (event == EpubDocument.EVENT_STOP) {
+            loadFileCount();
+        }
     }
 
     @Override
