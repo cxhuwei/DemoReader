@@ -6,6 +6,7 @@
 #include "ReadImageFile.h"
 #include "MAlgorithm.h"
 #include "tinyxml.h"
+#include <sys/prctl.h>
 
 #if defined (ANDROID22)
 
@@ -54,6 +55,8 @@ bool g_IsDrawing = false;
 
 int threadstartFun(void *pParam) {
     // LOCK_MUTEX(&g_Mutex);
+
+    prctl(PR_SET_NAME,"calcpageThread");
     SZEbookReader *pCaller = (SZEbookReader *) (pParam);
     pCaller->m_isReturn = false;
 
@@ -667,6 +670,8 @@ unsigned int SZEbookReader::GetFileCount() {
 
 
 unsigned int SZEbookReader::GetFilePageCount(unsigned int fileId) {
+
+    LOGI("SZEbookReader::GetFilePageCount");
     unsigned int smallPageCount = 0;
     vector<string> vfile = bookreader.m_book->m_bookSpine->GetVSpine();
     if (vfile.size() == 0 || fileId >= vfile.size()) {
@@ -674,6 +679,7 @@ unsigned int SZEbookReader::GetFilePageCount(unsigned int fileId) {
     }
 
     if (!m_isCalcFinish) {
+        LOGI("SZEbookReader::GetFilePageCount not calcfinish");
         LOCK_MUTEX(&m_lockAllPageInfo);
         Map_myBookPageInfo::iterator finder = m_mapAllPageInfo.find(fileId);
         if (finder != m_mapAllPageInfo.end()) {

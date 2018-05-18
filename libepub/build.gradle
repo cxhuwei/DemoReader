@@ -12,12 +12,12 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-fexceptions"
+                cppFlags "-fexceptions -fno-stack-protector"
                 arguments '-DANDROID_STL=gnustl_static'
             }
         }
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86"
+            abiFilters "armeabi-v7a", "x86"
         }
     }
 
