@@ -147,7 +147,7 @@ public class EpubActivity extends AppCompatActivity {
 
     private boolean closeDocument() {
         try {
-            EpubDocument.get().nativeCloseDocument();
+            EpubDocument.get().closeDocument();
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -680,7 +680,7 @@ public class EpubActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        EpubDocument.get().nativeCloseDocument();
+        EpubDocument.get().closeDocument();
         super.finish();
     }
 }

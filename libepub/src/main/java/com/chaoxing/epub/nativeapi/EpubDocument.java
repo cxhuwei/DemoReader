@@ -123,6 +123,11 @@ public class EpubDocument {
      */
     public native int nativeDrawPage(int fileId, int pageNumber, Bitmap bitmap);
 
+    public void closeDocument() {
+        nativeCloseDocument();
+        sInstance = null;
+    }
+
     /**
      * 销毁解析器
      */
