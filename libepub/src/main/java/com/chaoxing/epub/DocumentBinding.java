@@ -1,5 +1,7 @@
 package com.chaoxing.epub;
 
+import java.util.TreeMap;
+
 /**
  * Created by HUWEI on 2018/5/14.
  */
@@ -11,6 +13,11 @@ public class DocumentBinding {
     private int width;
     private int height;
     private int fileCount;
+    private TreeMap<Integer, EpubPage> mPageCouts = new TreeMap<>();
+
+    public DocumentBinding() {
+    }
+
 
     public String getPath() {
         return path;
@@ -58,6 +65,10 @@ public class DocumentBinding {
 
     public void setFileCount(int fileCount) {
         this.fileCount = fileCount;
+    }
+
+    public TreeMap<Integer, EpubPage> getPageCounts() {
+        return mPageCouts;
     }
 
 }

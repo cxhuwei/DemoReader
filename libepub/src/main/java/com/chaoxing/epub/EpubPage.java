@@ -7,7 +7,30 @@ import android.graphics.Bitmap;
  */
 public class EpubPage {
 
+    public enum PageType {
+        PAGE,
+        FILE
+    }
+
+    private PageType pageType;
+    private int fileId;
     private Bitmap bitmap;
+
+    public PageType getPageType() {
+        return pageType;
+    }
+
+    public void setPageType(PageType pageType) {
+        this.pageType = pageType;
+    }
+
+    public int getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
+    }
 
     public Bitmap getBitmap() {
         return bitmap;

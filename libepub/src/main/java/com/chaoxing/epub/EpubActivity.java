@@ -38,7 +38,10 @@ import com.chaoxing.epub.util.UriUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by HUWEI on 2018/4/18.
@@ -115,6 +118,8 @@ public class EpubActivity extends AppCompatActivity {
         if (!closeDocument()) {
             return;
         }
+
+        EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
 
         mViewModel.getInitDocumentResult().observe(this, mInitDocumentObserver);
         mViewModel.getOpenDocumentResult().observe(this, mOpenDocumentObserver);
@@ -266,6 +271,25 @@ public class EpubActivity extends AppCompatActivity {
     }
 
     private void notifyPageCountChanged() {
+        List<EpubPage> pageList = new ArrayList<>();
+        TreeMap<Integer, EpubPage> pageCounts = mViewModel.getDocumentBinding().getPageCounts();
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
+        int position = layoutManager.findFirstVisibleItemPosition();
+        EpubPage currentPage = null;
+        if (position >= 0) {
+            currentPage = mPagerAdapter.getItemAtPosition(position).getData();
+        }
+
+        if (currentPage != null) {
+
+        }
+
+        Iterator<Map.Entry<Integer, EpubPage>> it = pageCounts.entrySet().iterator();
+        while (it.hasNext()) {
+
+        }
+
         checkEmptyAdapter();
     }
 
@@ -569,7 +593,7 @@ public class EpubActivity extends AppCompatActivity {
                 Log.i(EpubActivity.TAG, "open document success");
                 mLoadingView.setVisibility(View.GONE);
                 notifyPageCountChanged();
-//                loadFileCount();
+                loadFileCount();
             }
         }
     };
@@ -610,6 +634,9 @@ public class EpubActivity extends AppCompatActivity {
             } else if (resource.isSuccessful()) {
                 Log.i(EpubActivity.TAG, "load page count by file success. file id = " + resource.getData().getId() + " page count = " + resource.getData().getPageCount());
                 mLoadingView.setVisibility(View.GONE);
+                EpubFile epubFile = resource.getData();
+//                mViewModel.getDocumentBinding().getPageCounts().put(epubFile.getId(), epubFile.getPageCount());
+//                notifyPageCountChanged();
             }
         }
     };

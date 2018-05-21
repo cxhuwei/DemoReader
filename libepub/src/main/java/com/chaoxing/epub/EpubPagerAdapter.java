@@ -65,6 +65,10 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mPageList == null ? 0 : mPageList.size();
     }
 
+    public Resource<EpubPage> getItemAtPosition(int position) {
+        return mPageList.get(position);
+    }
+
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
