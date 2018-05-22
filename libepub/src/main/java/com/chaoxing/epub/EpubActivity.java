@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -36,12 +37,10 @@ import com.chaoxing.epub.nativeapi.OnEventListener;
 import com.chaoxing.epub.util.EpubUtils;
 import com.chaoxing.epub.util.UriUtils;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by HUWEI on 2018/4/18.
@@ -135,6 +134,56 @@ public class EpubActivity extends AppCompatActivity {
         binding.setWidth(mDocumentPager.getWidth());
         binding.setHeight(mDocumentPager.getHeight());
         mViewModel.openDocument();
+
+//        DocumentBinding binding = mViewModel.getDocumentBinding();
+//        try {
+//            String fontPath = getFontPath(this);
+//            int setFontResource = -1;
+//            if (fontPath != null) {
+//                setFontResource = EpubDocument.get().nativeSetFontResource(new String[]{fontPath, fontPath});
+//            }
+//            int layout = EpubDocument.get().nativeLayout(binding.getWidth(), binding.getHeight(), 0, 0, binding.getWidth(), binding.getHeight(), binding.getDensity());
+//            int background = EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
+//            int textLevel = EpubDocument.get().nativeSetTextLevel(0);
+//            EpubInfo info = null;
+//            if (setFontResource == 0 && layout == 0 && background == 0 && textLevel == 0) {
+//                info = EpubDocument.get().nativeOpenDocument(binding.getPath());
+//            }
+//            if (info != null) {
+//                Log.i(EpubActivity.TAG, info.toString());
+//                loadFileCount();
+//            } else {
+//                Log.i(EpubActivity.TAG, "打开失败");
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private String getFontPath(Context context) throws Throwable {
+        String fontPath = null;
+        File fontDir = new File(context.getExternalCacheDir(), File.separator + "epub" + File.separator + "font");
+        if (!fontDir.exists()) {
+            fontDir.mkdirs();
+        }
+        File fontFile = new File(fontDir, "fzlthk.ttf");
+        String assetsFontFile = "font" + File.separator + "fzlthk.ttf";
+        if (fontFile.exists()) {
+            String fontMd5 = EpubUtils.md5(fontFile);
+            String assetsFontMd5 = EpubUtils.md5(context.getAssets().open(assetsFontFile));
+            if (!EpubUtils.equals(fontMd5, assetsFontMd5)) {
+                if (fontFile.delete()) {
+                    EpubUtils.assetsCopy(context, assetsFontFile, fontFile.getAbsolutePath());
+                    fontPath = fontFile.getAbsolutePath();
+                }
+            } else {
+                fontPath = fontFile.getAbsolutePath();
+            }
+        } else {
+            EpubUtils.assetsCopy(context, assetsFontFile, fontFile.getAbsolutePath());
+            fontPath = fontFile.getAbsolutePath();
+        }
+        return fontPath;
     }
 
     private void loadFileCount() {
@@ -272,24 +321,20 @@ public class EpubActivity extends AppCompatActivity {
 
     private void notifyPageCountChanged() {
         List<EpubPage> pageList = new ArrayList<>();
-        TreeMap<Integer, EpubPage> pageCounts = mViewModel.getDocumentBinding().getPageCounts();
+        DocumentBinding documentBinding = mViewModel.getDocumentBinding();
+        if (mPagerAdapter.getItemCount() > 0) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
+            int position = layoutManager.findFirstVisibleItemPosition();
+            EpubPage currentPage = mPagerAdapter.getItemAtPosition(position).getData();
+            List<EpubPage> pages = documentBinding.getPagesByFileId(currentPage.getFileId());
+            if (pages == null) {
+                if (currentPage.getFileId() > 0) {
 
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
-        int position = layoutManager.findFirstVisibleItemPosition();
-        EpubPage currentPage = null;
-        if (position >= 0) {
-            currentPage = mPagerAdapter.getItemAtPosition(position).getData();
+                }
+            } else {
+
+            }
         }
-
-        if (currentPage != null) {
-
-        }
-
-        Iterator<Map.Entry<Integer, EpubPage>> it = pageCounts.entrySet().iterator();
-        while (it.hasNext()) {
-
-        }
-
         checkEmptyAdapter();
     }
 
@@ -673,8 +718,8 @@ public class EpubActivity extends AppCompatActivity {
         int event = msg.what;
         String message = (String) msg.obj;
         Log.i(EpubActivity.TAG, "onEvent() event = " + event + " message = " + message);
+        Toast.makeText(this, "onEvent() event = " + event + " message = " + message, Toast.LENGTH_SHORT).show();
         if (event == EpubDocument.EVENT_STOP) {
-            loadFileCount();
         }
     }
 

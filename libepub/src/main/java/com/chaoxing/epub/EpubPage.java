@@ -14,6 +14,7 @@ public class EpubPage {
 
     private PageType pageType;
     private int fileId;
+    private int pageNumber;
     private Bitmap bitmap;
 
     public PageType getPageType() {
@@ -30,6 +31,14 @@ public class EpubPage {
 
     public void setFileId(int fileId) {
         this.fileId = fileId;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
     public Bitmap getBitmap() {
