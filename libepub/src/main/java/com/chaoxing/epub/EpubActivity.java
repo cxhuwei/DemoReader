@@ -718,7 +718,9 @@ public class EpubActivity extends AppCompatActivity {
         int event = msg.what;
         String message = (String) msg.obj;
         Log.i(EpubActivity.TAG, "onEvent() event = " + event + " message = " + message);
-        Toast.makeText(this, "onEvent() event = " + event + " message = " + message, Toast.LENGTH_SHORT).show();
+        if (event == EpubDocument.EVENT_CALC_PAGE_COMPLETE) {
+            Toast.makeText(this, "onEvent() event = " + event + " message = " + message, Toast.LENGTH_SHORT).show();
+        }
         if (event == EpubDocument.EVENT_STOP) {
         }
     }
