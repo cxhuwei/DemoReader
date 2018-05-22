@@ -49,4 +49,12 @@ public class EpubPage {
         this.bitmap = bitmap;
     }
 
+    public EpubPage copy() {
+        EpubPage newPage = new EpubPage();
+        newPage.setFileId(getFileId());
+        newPage.setPageType(getPageType());
+        newPage.setPageNumber(getPageNumber());
+        newPage.setBitmap(getBitmap());
+        return newPage;
+    }
 }

@@ -45,7 +45,7 @@ Get_JNIEnv_Status getJNIEnv(JNIEnv **env) {
         return GetStatus;
     }
 
-    int status = g_jvm->GetEnv((void **) env, JNI_VERSION_1_4);
+    int status = g_jvm->GetEnv((void **) env, JNI_VERSION_1_6);
     if (status < 0) {
         LOGI("callback_handler:failed to get JNI environment assuming native thread");
         status = g_jvm->AttachCurrentThread(env, NULL);

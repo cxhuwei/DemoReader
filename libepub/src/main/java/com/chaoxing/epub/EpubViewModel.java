@@ -7,12 +7,19 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by HUWEI on 2018/5/14.
  */
 public class EpubViewModel extends AndroidViewModel {
 
+    private List<Integer> mFileIdList = new ArrayList<>();
+    private List<PageKey> mPageKeyList = new ArrayList<>();
+
     private EpubLoader mEpubLoader = new EpubLoader();
+    private PageLoader mPageLoader = new PageLoader();
 
     private final MutableLiveData<String> mInitDocument = new MutableLiveData<>();
     private LiveData<Resource<DocumentBinding>> mInitDocumentResult;
@@ -25,6 +32,9 @@ public class EpubViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Integer> mLoadPageCountByFile = new MutableLiveData<>();
     private LiveData<Resource<EpubFile>> mLoadPageCountByFileResult;
+
+    private final MutableLiveData<EpubPage> mLoadPage = new MutableLiveData<>();
+    private LiveData<Resource<EpubPage>> mLoadPageResult;
 
     public EpubViewModel(@NonNull Application application) {
         super(application);
@@ -42,6 +52,10 @@ public class EpubViewModel extends AndroidViewModel {
 
         mLoadPageCountByFileResult = Transformations.switchMap(mLoadPageCountByFile, fileId -> {
             return mEpubLoader.loadPageCountByFile(fileId);
+        });
+
+        mLoadPageResult = Transformations.switchMap(mLoadPage, epubPage -> {
+            return mPageLoader.loadPage(getDocumentBinding(), epubPage);
         });
     }
 
@@ -78,7 +92,46 @@ public class EpubViewModel extends AndroidViewModel {
     }
 
     public void loadPageCountByFile(int fileId) {
+        for (Integer id : mFileIdList) {
+            if (id == fileId) {
+                return;
+            }
+        }
+        mFileIdList.add(fileId);
         mLoadPageCountByFile.setValue(fileId);
     }
 
+    public void removeLoadingFileId(int fileId) {
+        for (int i = 0; i < mFileIdList.size(); i++) {
+            Integer id = mFileIdList.get(i);
+            if (id == fileId) {
+                mFileIdList.remove(i);
+                break;
+            }
+        }
+    }
+
+    public LiveData<Resource<EpubPage>> getLoadPageResult() {
+        return mLoadPageResult;
+    }
+
+    public void loadPage(EpubPage page) {
+        for (PageKey key : mPageKeyList) {
+            if (key.getFileId() == page.getFileId() && key.getPageNumber() == page.getPageNumber()) {
+                return;
+            }
+        }
+        mPageKeyList.add(new PageKey(page.getFileId(), page.getPageNumber()));
+        EpubPage newPage = page.copy();
+        mLoadPage.setValue(newPage);
+    }
+
+    public void removeLoadingPage(PageKey pageKey) {
+        for (PageKey key : mPageKeyList) {
+            if (key.getFileId() == pageKey.getFileId() && key.getPageNumber() == pageKey.getPageNumber()) {
+                mPageKeyList.remove(key);
+                break;
+            }
+        }
+    }
 }

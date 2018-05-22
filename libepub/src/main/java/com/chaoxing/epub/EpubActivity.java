@@ -97,11 +97,11 @@ public class EpubActivity extends AppCompatActivity {
     }
 
     private void initDocument() {
-        List<Resource<EpubPage>> pageList = new ArrayList<>();
-        for (int i = 0; i < 60; i++) {
-            pageList.add(Resource.success(new EpubPage()));
-        }
-        mPagerAdapter.setPageList(pageList);
+//        List<Resource<EpubPage>> pageList = new ArrayList<>();
+//        for (int i = 0; i < 60; i++) {
+//            pageList.add(Resource.success(new EpubPage()));
+//        }
+//        mPagerAdapter.setPageList(pageList);
 
         Uri uri = getIntent().getData();
         String mimetype = getIntent().getType();
@@ -114,9 +114,9 @@ public class EpubActivity extends AppCompatActivity {
             return;
         }
 
-        if (!closeDocument()) {
-            return;
-        }
+//        if (!closeDocument()) {
+//            return;
+//        }
 
         EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
 
@@ -124,16 +124,28 @@ public class EpubActivity extends AppCompatActivity {
         mViewModel.getOpenDocumentResult().observe(this, mOpenDocumentObserver);
         mViewModel.getLoadFileCountResult().observe(this, mLoadFileCountObserver);
         mViewModel.getLoadPageCountByFileResult().observe(this, mLoadPageCountByFileObserver);
+        mViewModel.getLoadPageResult().observe(this, mLoadPageObserver);
         mViewModel.initDocument(path);
     }
 
     private void openDocument() {
         EpubDocument.get().setOnEventListener(mOnEventListener);
+        String fontPath = null;
+        try {
+            fontPath = getFontPath(this);
+        }catch (Throwable e) {
+            e.printStackTrace();
+        }
+        if(fontPath == null){
+            return;
+        }
+        EpubDocument.get().nativeSetFontResource(new String[]{fontPath, fontPath});
         DocumentBinding binding = mViewModel.getDocumentBinding();
         binding.setDensity(getResources().getDisplayMetrics().density);
         binding.setWidth(mDocumentPager.getWidth());
         binding.setHeight(mDocumentPager.getHeight());
-        mViewModel.openDocument();
+        EpubDocument.get().nativeOpenDocument(binding.getPath());
+//        mViewModel.openDocument();
 
 //        DocumentBinding binding = mViewModel.getDocumentBinding();
 //        try {
@@ -192,6 +204,10 @@ public class EpubActivity extends AppCompatActivity {
 
     private void loadPageCountByFile(int fileId) {
         mViewModel.loadPageCountByFile(fileId);
+    }
+
+    private void loadPage(EpubPage epubPage) {
+        mViewModel.loadPage(epubPage);
     }
 
     private boolean closeDocument() {
@@ -320,21 +336,66 @@ public class EpubActivity extends AppCompatActivity {
     }
 
     private void notifyPageCountChanged() {
-        List<EpubPage> pageList = new ArrayList<>();
+        List<Resource<EpubPage>> pageList = new ArrayList<>();
+        int pagePosition = 0;
         DocumentBinding documentBinding = mViewModel.getDocumentBinding();
+
+        int prevFileId;
+        int currentFileId;
+        int nextFileId;
         if (mPagerAdapter.getItemCount() > 0) {
             LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
             int position = layoutManager.findFirstVisibleItemPosition();
             EpubPage currentPage = mPagerAdapter.getItemAtPosition(position).getData();
-            List<EpubPage> pages = documentBinding.getPagesByFileId(currentPage.getFileId());
-            if (pages == null) {
-                if (currentPage.getFileId() > 0) {
+            prevFileId = currentPage.getFileId() - 1;
+            currentFileId = currentPage.getFileId();
+            nextFileId = currentPage.getFileId() + 1;
+        } else {
+            prevFileId = -1;
+            currentFileId = 0;
+            nextFileId = 1;
+        }
 
-                }
+        List<Resource<EpubPage>> prevFilePages = documentBinding.getResourcePagesByFileId(prevFileId);
+        List<Resource<EpubPage>> currentFilePages = documentBinding.getResourcePagesByFileId(currentFileId);
+        List<Resource<EpubPage>> nextFilePages = documentBinding.getResourcePagesByFileId(nextFileId);
+
+        if (prevFilePages == null) {
+            if (prevFileId >= 0) {
+                EpubPage page = new EpubPage();
+                page.setFileId(prevFileId);
+                page.setPageType(EpubPage.PageType.FILE);
+                page.setPageNumber(-1);
+                pageList.add(Resource.idle(page));
+            }
+        } else {
+            pageList.addAll(prevFilePages);
+        }
+
+        if (currentFilePages == null) {
+            EpubPage page = new EpubPage();
+            page.setFileId(currentFileId);
+            page.setPageType(EpubPage.PageType.FILE);
+            page.setPageNumber(0);
+            pageList.add(Resource.idle(page));
+        } else {
+            pageList.addAll(currentFilePages);
+        }
+        pagePosition = pageList.size() - 1;
+
+        if (currentFilePages != null && nextFileId < documentBinding.getFileCount()) {
+            if (nextFilePages == null) {
+                EpubPage page = new EpubPage();
+                page.setFileId(prevFileId);
+                page.setPageType(EpubPage.PageType.FILE);
+                page.setPageNumber(0);
+                pageList.add(Resource.idle(page));
             } else {
-
+                pageList.addAll(nextFilePages);
             }
         }
+
+        mPagerAdapter.setPageList(pageList);
         checkEmptyAdapter();
     }
 
@@ -592,7 +653,11 @@ public class EpubActivity extends AppCompatActivity {
 
         @Override
         public void loadPage(EpubPage page) {
-
+            if (page.getPageType() == EpubPage.PageType.FILE) {
+                loadPageCountByFile(page.getFileId());
+            } else {
+                EpubActivity.this.loadPage(page);
+            }
         }
 
     };
@@ -637,8 +702,7 @@ public class EpubActivity extends AppCompatActivity {
             } else if (resource.isSuccessful()) {
                 Log.i(EpubActivity.TAG, "open document success");
                 mLoadingView.setVisibility(View.GONE);
-                notifyPageCountChanged();
-                loadFileCount();
+//                loadFileCount();
             }
         }
     };
@@ -659,7 +723,7 @@ public class EpubActivity extends AppCompatActivity {
                 mLoadingView.setVisibility(View.GONE);
                 Log.i(EpubActivity.TAG, "load file count success. file count = " + resource.getData());
                 mViewModel.getDocumentBinding().setFileCount(resource.getData());
-                loadPageCountByFile(1);
+                notifyPageCountChanged();
             }
         }
     };
@@ -667,8 +731,10 @@ public class EpubActivity extends AppCompatActivity {
     private Observer<Resource<EpubFile>> mLoadPageCountByFileObserver = new Observer<Resource<EpubFile>>() {
         @Override
         public void onChanged(@Nullable Resource<EpubFile> resource) {
+            EpubFile epubFile = resource.getData();
             if (resource.isError()) {
                 Log.i(EpubActivity.TAG, "load page count by file failed. file id = " + resource.getData().getId());
+                mViewModel.removeLoadingFileId(epubFile.getId());
                 mLoadingView.setVisibility(View.GONE);
                 mTvMessage.setText(resource.getMessage());
                 mTvMessage.setVisibility(View.VISIBLE);
@@ -678,11 +744,42 @@ public class EpubActivity extends AppCompatActivity {
                 mTvMessage.setVisibility(View.GONE);
             } else if (resource.isSuccessful()) {
                 Log.i(EpubActivity.TAG, "load page count by file success. file id = " + resource.getData().getId() + " page count = " + resource.getData().getPageCount());
+                mViewModel.removeLoadingFileId(epubFile.getId());
                 mLoadingView.setVisibility(View.GONE);
-                EpubFile epubFile = resource.getData();
-//                mViewModel.getDocumentBinding().getPageCounts().put(epubFile.getId(), epubFile.getPageCount());
-//                notifyPageCountChanged();
+                List<Resource<EpubPage>> pageList = new ArrayList<>();
+                for (int i = 0; i < epubFile.getPageCount(); i++) {
+                    EpubPage page = new EpubPage();
+                    page.setFileId(epubFile.getId());
+                    page.setPageType(EpubPage.PageType.PAGE);
+                    page.setPageNumber(i + 1);
+                    pageList.add(Resource.idle(page));
+                }
+                mViewModel.getDocumentBinding().addResourcePages(epubFile.getId(), pageList);
+                notifyPageCountChanged();
             }
+        }
+    };
+    private Observer<Resource<EpubPage>> mLoadPageObserver = new Observer<Resource<EpubPage>>() {
+        @Override
+        public void onChanged(@Nullable Resource<EpubPage> resource) {
+            EpubPage page = resource.getData();
+            if (resource.isError()) {
+                Log.i(EpubActivity.TAG, String.format("load page failed. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+                mViewModel.removeLoadingPage(new PageKey(page.getFileId(), page.getPageNumber()));
+                mLoadingView.setVisibility(View.GONE);
+                mTvMessage.setText(resource.getMessage());
+                mTvMessage.setVisibility(View.VISIBLE);
+            } else if (resource.isLoading()) {
+                Log.i(EpubActivity.TAG, String.format("load page. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+                mLoadingView.setVisibility(View.VISIBLE);
+                mTvMessage.setVisibility(View.GONE);
+            } else if (resource.isSuccessful()) {
+                Log.i(EpubActivity.TAG, String.format("load page success. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+                mViewModel.removeLoadingPage(new PageKey(page.getFileId(), page.getPageNumber()));
+                mLoadingView.setVisibility(View.GONE);
+            }
+            mViewModel.getDocumentBinding().updatePage(resource);
+            mPagerAdapter.updatePage(resource);
         }
     };
 
@@ -720,8 +817,8 @@ public class EpubActivity extends AppCompatActivity {
         Log.i(EpubActivity.TAG, "onEvent() event = " + event + " message = " + message);
         if (event == EpubDocument.EVENT_CALC_PAGE_COMPLETE) {
             Toast.makeText(this, "onEvent() event = " + event + " message = " + message, Toast.LENGTH_SHORT).show();
-        }
-        if (event == EpubDocument.EVENT_STOP) {
+        } else if (event == EpubDocument.EVENT_CALC_CATALOG_PAGE_COMPLETE) {
+            loadFileCount();
         }
     }
 

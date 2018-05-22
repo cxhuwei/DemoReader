@@ -2,7 +2,6 @@ package com.chaoxing.epub;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -44,14 +42,46 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         PageViewHolder viewHolder = (PageViewHolder) holder;
-        EpubPage page = mPageList.get(position).getData();
-        if (page.getBitmap() == null || page.getBitmap().isRecycled()) {
-            InputStream is = holder.itemView.getResources().openRawResource(R.raw.page_sample);
-            page.setBitmap(BitmapFactory.decodeStream(is));
+        Resource<EpubPage> resourcePage = mPageList.get(position);
+        EpubPage page = resourcePage.getData();
+
+        if (resourcePage.isLoading()) {
+            viewHolder.mLoadingView.setVisibility(View.VISIBLE);
+            viewHolder.mTvMessage.setVisibility(View.GONE);
+            viewHolder.mBtnRetry.setVisibility(View.GONE);
+            viewHolder.mLoadingStatus.setVisibility(View.VISIBLE);
+        } else if (resourcePage.isError()) {
+            viewHolder.mLoadingView.setVisibility(View.GONE);
+            viewHolder.mTvMessage.setText(resourcePage.getMessage());
+            viewHolder.mTvMessage.setVisibility(View.VISIBLE);
+            viewHolder.mBtnRetry.setVisibility(View.VISIBLE);
+            viewHolder.mLoadingStatus.setVisibility(View.VISIBLE);
+        } else {
+            if (page.getPageType() == EpubPage.PageType.FILE) {
+                if (mPageListener != null) {
+                    viewHolder.mPageView.setImageResource(R.drawable.libepub_page_white);
+                    mPageListener.loadPage(page);
+                }
+            } else {
+                Bitmap bitmap = page.getBitmap();
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    viewHolder.mPageView.setImageBitmap(bitmap);
+                } else {
+                    viewHolder.mPageView.setImageResource(R.drawable.libepub_page_white);
+                    mPageListener.loadPage(page);
+                }
+            }
         }
-        if (page.getBitmap() != null && !page.getBitmap().isRecycled()) {
-            viewHolder.mPageView.setImageBitmap(page.getBitmap());
-        }
+
+//        if (page.getBitmap() == null || page.getBitmap().isRecycled()) {
+//            InputStream is = holder.itemView.getResources().openRawResource(R.raw.page_sample);
+//            page.setBitmap(BitmapFactory.decodeStream(is));
+//        }
+//
+//        if (page.getBitmap() != null && !page.getBitmap().isRecycled()) {
+//            viewHolder.mPageView.setImageBitmap(page.getBitmap());
+//        }
+
         viewHolder.mPageView.setOnTouchListener((View v, MotionEvent event) -> {
             if (mGestureDetector != null) {
                 return mGestureDetector.onTouchEvent(event);
@@ -88,6 +118,24 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else {
             mPageList = pageList;
             notifyDataSetChanged();
+        }
+    }
+
+    public void updatePage(Resource<EpubPage> newResourcePage) {
+        int position = -1;
+        EpubPage newPage = newResourcePage.getData();
+        for (int i = 0; i < mPageList.size(); i++) {
+            Resource<EpubPage> oldResourcePage = mPageList.get(i);
+            EpubPage oldPage = oldResourcePage.getData();
+            if (oldPage.getFileId() == newPage.getFileId() && oldPage.getPageNumber() == newPage.getPageNumber()) {
+                mPageList.remove(i);
+                mPageList.add(i, newResourcePage);
+                position = i;
+                break;
+            }
+        }
+        if (position >= 0) {
+            notifyItemChanged(position);
         }
     }
 

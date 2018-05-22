@@ -14,7 +14,7 @@ public class DocumentBinding {
     private int width;
     private int height;
     private int fileCount;
-    private TreeMap<Integer, List<EpubPage>> mPageCouts = new TreeMap<>();
+    private TreeMap<Integer, List<Resource<EpubPage>>> mResourcePages = new TreeMap<>();
 
     public DocumentBinding() {
     }
@@ -68,12 +68,26 @@ public class DocumentBinding {
         this.fileCount = fileCount;
     }
 
-    public TreeMap<Integer, List<EpubPage>> getPageCounts() {
-        return mPageCouts;
+    public List<Resource<EpubPage>> getResourcePagesByFileId(int fileId) {
+        return mResourcePages.get(fileId);
     }
 
-    public List<EpubPage> getPagesByFileId(int fileId) {
-        return mPageCouts.get(fileId);
+    public void addResourcePages(int fileId, List<Resource<EpubPage>> resourcePages) {
+        mResourcePages.put(fileId, resourcePages);
+    }
+
+    public void updatePage(Resource<EpubPage> newResourcePage) {
+        List<Resource<EpubPage>> pageList = mResourcePages.get(newResourcePage.getData().getFileId());
+        if (pageList != null) {
+            for (int i = 0; i < pageList.size(); i++) {
+                Resource<EpubPage> oldResourcePage = pageList.get(i);
+                if (oldResourcePage.getData().getPageNumber() == newResourcePage.getData().getPageNumber()) {
+                    pageList.remove(i);
+                    pageList.add(i, newResourcePage);
+                    break;
+                }
+            }
+        }
     }
 
 }

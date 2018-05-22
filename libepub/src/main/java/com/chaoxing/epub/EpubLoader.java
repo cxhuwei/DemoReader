@@ -3,7 +3,6 @@ package com.chaoxing.epub;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -52,18 +51,20 @@ public class EpubLoader {
             protected Resource<Void> onExecute(DocumentBinding binding) {
                 Resource result = null;
                 try {
-                    String fontPath = getFontPath(application);
-                    int setFontResource = -1;
-                    if (fontPath != null) {
-                        setFontResource = EpubDocument.get().nativeSetFontResource(new String[]{fontPath, fontPath});
-                    }
-                    int layout = EpubDocument.get().nativeLayout(binding.getWidth(), binding.getHeight(), 0, 0, binding.getWidth(), binding.getHeight(), binding.getDensity());
-                    int background = EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
-                    int textLevel = EpubDocument.get().nativeSetTextLevel(0);
-                    EpubInfo info = null;
-                    if (setFontResource == 0 && layout == 0 && background == 0 && textLevel == 0) {
-                        info = EpubDocument.get().nativeOpenDocument(binding.getPath());
-                    }
+//                    String fontPath = getFontPath(application);
+//                    int setFontResource = -1;
+//                    if (fontPath != null) {
+//                        setFontResource = EpubDocument.get().nativeSetFontResource(new String[]{fontPath, fontPath});
+//                    }
+//                    int layout = EpubDocument.get().nativeLayout(binding.getWidth(), binding.getHeight(), 0, 0, binding.getWidth(), binding.getHeight(), binding.getDensity());
+//                    int background = EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
+//                    int textLevel = EpubDocument.get().nativeSetTextLevel(0);
+//                    EpubInfo info = null;
+//                    if (setFontResource == 0 && layout == 0 && background == 0 && textLevel == 0) {
+//                        info = EpubDocument.get().nativeOpenDocument(binding.getPath());
+//                    }
+
+                    EpubInfo info = EpubDocument.get().nativeOpenDocument(binding.getPath());
                     if (info != null) {
                         Log.i(EpubActivity.TAG, info.toString());
                         result = Resource.success(null);
@@ -156,5 +157,6 @@ public class EpubLoader {
         };
         return exexute.execute(fileId);
     }
+
 
 }
