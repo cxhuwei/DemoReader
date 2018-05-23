@@ -134,9 +134,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             }
         }
-        if (position >= 0) {
-            notifyItemChanged(position);
-        }
+        notifyDataSetChanged();
     }
 
     static class PageViewHolder extends RecyclerView.ViewHolder {
