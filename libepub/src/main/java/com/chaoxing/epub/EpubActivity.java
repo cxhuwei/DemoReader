@@ -150,6 +150,7 @@ public class EpubActivity extends AppCompatActivity {
         EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
         EpubDocument.get().nativeSetTextLevel(0);
         EpubDocument.get().nativeOpenDocument(binding.getPath());
+        mLoadingView.setVisibility(View.VISIBLE);
 //        mViewModel.openDocument();
 
 //        DocumentBinding binding = mViewModel.getDocumentBinding();
