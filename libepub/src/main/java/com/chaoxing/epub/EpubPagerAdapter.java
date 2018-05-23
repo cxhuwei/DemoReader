@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static String TAG = EpubPagerAdapter.class.getSimpleName();
-
     private List<Resource<EpubPage>> mPageList;
 
     private PageListener mPageListener;
@@ -43,6 +41,8 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         PageViewHolder viewHolder = (PageViewHolder) holder;
         Resource<EpubPage> resourcePage = mPageList.get(position);
         EpubPage page = resourcePage.getData();
+
+        viewHolder.mTvPageNumber.setText(page.getFileId() + "/" + page.getPageNumber());
 
         if (resourcePage.isLoading()) {
             viewHolder.mLoadingView.setVisibility(View.VISIBLE);
@@ -106,8 +106,8 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         int position = holder.getAdapterPosition();
         if (position >= 0 && position < mPageList.size()) {
-            Log.i(TAG, "onPageRecycled : " + (position + 1));
             EpubPage page = mPageList.get(position).getData();
+            Log.i(EpubActivity.TAG, String.format("onPageRecycled : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
             Bitmap bitmap = page.getBitmap();
             page.setBitmap(null);
             if (bitmap != null && !bitmap.isRecycled()) {
@@ -134,13 +134,12 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Resource<EpubPage> oldResourcePage = mPageList.get(i);
             EpubPage oldPage = oldResourcePage.getData();
             if (oldPage.getFileId() == newPage.getFileId() && oldPage.getPageNumber() == newPage.getPageNumber()) {
-                mPageList.remove(i);
-                mPageList.add(i, newResourcePage);
+                mPageList.set(i, newResourcePage);
                 position = i;
                 break;
             }
         }
-        notifyDataSetChanged();
+        notifyItemChanged(position);
     }
 
     static class PageViewHolder extends RecyclerView.ViewHolder {
@@ -150,6 +149,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         View mLoadingView;
         TextView mTvMessage;
         Button mBtnRetry;
+        TextView mTvPageNumber;
 
         public PageViewHolder(View itemView) {
             super(itemView);
@@ -158,6 +158,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             mLoadingView = itemView.findViewById(R.id.pb_loading);
             mTvMessage = itemView.findViewById(R.id.tv_message);
             mBtnRetry = itemView.findViewById(R.id.btn_retry);
+            mTvPageNumber = itemView.findViewById(R.id.tv_page_number);
         }
 
     }

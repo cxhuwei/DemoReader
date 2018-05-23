@@ -34,6 +34,7 @@ public class PageLoader {
                         page.setBitmap(bitmap);
                         result = Resource.success(page);
                     } else {
+                        bitmap.recycle();
                         result = Resource.error(String.format("页面绘制错误(error=%d)", r), page);
                     }
                 } catch (Throwable e) {

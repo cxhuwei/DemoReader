@@ -741,7 +741,6 @@ public class EpubActivity extends AppCompatActivity {
             if (resource.isError()) {
                 Log.i(EpubActivity.TAG, "load page count by file failed. file id = " + resource.getData().getId());
                 mViewModel.removeLoadingFileId(epubFile.getId());
-                mLoadingView.setVisibility(View.GONE);
                 mTvMessage.setText(resource.getMessage());
                 mTvMessage.setVisibility(View.VISIBLE);
             } else if (resource.isLoading()) {
@@ -772,17 +771,14 @@ public class EpubActivity extends AppCompatActivity {
             if (resource.isError()) {
                 Log.i(EpubActivity.TAG, String.format("load page failed. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
                 mViewModel.removeLoadingPage(new PageKey(page.getFileId(), page.getPageNumber()));
-                mLoadingView.setVisibility(View.GONE);
                 mTvMessage.setText(resource.getMessage());
                 mTvMessage.setVisibility(View.VISIBLE);
             } else if (resource.isLoading()) {
                 Log.i(EpubActivity.TAG, String.format("load page. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
-                mLoadingView.setVisibility(View.VISIBLE);
                 mTvMessage.setVisibility(View.GONE);
             } else if (resource.isSuccessful()) {
                 Log.i(EpubActivity.TAG, String.format("load page success. file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
                 mViewModel.removeLoadingPage(new PageKey(page.getFileId(), page.getPageNumber()));
-                mLoadingView.setVisibility(View.GONE);
             }
             mViewModel.getDocumentBinding().updatePage(resource);
             mHandler.post(new Runnable() {
@@ -829,6 +825,7 @@ public class EpubActivity extends AppCompatActivity {
         if (event == EpubDocument.EVENT_CALC_PAGE_COMPLETE) {
             Toast.makeText(this, "onEvent() event = " + event + " message = " + message, Toast.LENGTH_SHORT).show();
         } else if (event == EpubDocument.EVENT_CALC_CATALOG_PAGE_COMPLETE) {
+            mLoadingView.setVisibility(View.GONE);
             loadFileCount();
         }
     }

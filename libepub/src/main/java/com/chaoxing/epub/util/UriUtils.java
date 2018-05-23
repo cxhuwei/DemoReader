@@ -90,8 +90,9 @@ public class UriUtils {
         String path = null;
 
         String columnName = MediaStore.Files.FileColumns.DATA;
-
-        if (uri == MediaStore.Images.Media.EXTERNAL_CONTENT_URI) {
+        if (isFileUri(uri)) {
+            path = uri.getPath();
+        } else if (uri == MediaStore.Images.Media.EXTERNAL_CONTENT_URI) {
             columnName = MediaStore.Images.Media.DATA;
         } else if (uri == MediaStore.Audio.Media.EXTERNAL_CONTENT_URI) {
             columnName = MediaStore.Audio.Media.DATA;

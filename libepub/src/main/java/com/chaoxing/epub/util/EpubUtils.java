@@ -70,7 +70,9 @@ public class EpubUtils {
                 newUiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE;
                 decorView.setSystemUiVisibility(newUiOptions);
             } else {
-
+                WindowManager.LayoutParams params = window.getAttributes();
+                params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                window.setAttributes(params);
             }
         }
     }

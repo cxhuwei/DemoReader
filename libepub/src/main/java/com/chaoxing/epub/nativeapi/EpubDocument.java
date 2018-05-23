@@ -1,6 +1,7 @@
 package com.chaoxing.epub.nativeapi;
 
 import android.graphics.Bitmap;
+import android.os.Build;
 
 /**
  * Created by HUWEI on 2018/4/24.
@@ -8,6 +9,9 @@ import android.graphics.Bitmap;
 public class EpubDocument {
 
     static {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            System.loadLibrary("iconv");
+        }
         System.loadLibrary("epub");
     }
 

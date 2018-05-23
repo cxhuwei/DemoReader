@@ -116,6 +116,9 @@ public class EpubViewModel extends AndroidViewModel {
     }
 
     public void loadPage(EpubPage page) {
+        if (!mPageKeyList.isEmpty()) {
+            return;
+        }
         for (PageKey key : mPageKeyList) {
             if (key.getFileId() == page.getFileId() && key.getPageNumber() == page.getPageNumber()) {
                 return;
