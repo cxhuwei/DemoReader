@@ -79,6 +79,8 @@ public class EpubActivity extends AppCompatActivity {
     private EpubPagerAdapter mPagerAdapter;
     private View mEmptyCover;
 
+    private Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -363,16 +365,16 @@ public class EpubActivity extends AppCompatActivity {
         List<Resource<EpubPage>> currentFilePages = documentBinding.getResourcePagesByFileId(currentFileId);
         List<Resource<EpubPage>> nextFilePages = documentBinding.getResourcePagesByFileId(nextFileId);
 
-        if (prevFilePages == null) {
-            if (prevFileId >= 0) {
+        if (prevFileId >= 0) {
+            if (prevFilePages == null) {
                 EpubPage page = new EpubPage();
                 page.setFileId(prevFileId);
                 page.setPageType(EpubPage.PageType.FILE);
                 page.setPageNumber(-1);
                 pageList.add(Resource.idle(page));
+            } else {
+                pageList.addAll(prevFilePages);
             }
-        } else {
-            pageList.addAll(prevFilePages);
         }
 
         if (currentFilePages == null) {
@@ -389,7 +391,7 @@ public class EpubActivity extends AppCompatActivity {
         if (currentFilePages != null && nextFileId < documentBinding.getFileCount()) {
             if (nextFilePages == null) {
                 EpubPage page = new EpubPage();
-                page.setFileId(prevFileId);
+                page.setFileId(nextFileId);
                 page.setPageType(EpubPage.PageType.FILE);
                 page.setPageNumber(0);
                 pageList.add(Resource.idle(page));
@@ -399,6 +401,7 @@ public class EpubActivity extends AppCompatActivity {
         }
 
         mPagerAdapter.setPageList(pageList);
+        mDocumentPager.scrollToPosition(pagePosition);
         checkEmptyAdapter();
     }
 
@@ -782,7 +785,12 @@ public class EpubActivity extends AppCompatActivity {
                 mLoadingView.setVisibility(View.GONE);
             }
             mViewModel.getDocumentBinding().updatePage(resource);
-            mPagerAdapter.updatePage(resource);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPagerAdapter.updatePage(resource);
+                }
+            });
         }
     };
 

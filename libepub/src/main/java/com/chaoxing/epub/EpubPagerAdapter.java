@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -57,6 +56,10 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewHolder.mBtnRetry.setVisibility(View.VISIBLE);
             viewHolder.mLoadingStatus.setVisibility(View.VISIBLE);
         } else {
+            viewHolder.mLoadingStatus.setVisibility(View.GONE);
+            viewHolder.mLoadingView.setVisibility(View.GONE);
+            viewHolder.mTvMessage.setVisibility(View.GONE);
+            viewHolder.mBtnRetry.setVisibility(View.GONE);
             if (page.getPageType() == EpubPage.PageType.FILE) {
                 if (mPageListener != null) {
                     viewHolder.mPageView.setImageResource(R.drawable.libepub_page_white);
@@ -101,14 +104,17 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        super.onViewRecycled(holder);
-        Log.i(TAG, "onPageRecycled : " + (holder.getAdapterPosition() + 1));
-        EpubPage page = mPageList.get(holder.getAdapterPosition()).getData();
-        Bitmap bitmap = page.getBitmap();
-        page.setBitmap(null);
-        if (bitmap != null && !bitmap.isRecycled()) {
-            bitmap.recycle();
+        int position = holder.getAdapterPosition();
+        if (position >= 0 && position < mPageList.size()) {
+            Log.i(TAG, "onPageRecycled : " + (position + 1));
+            EpubPage page = mPageList.get(position).getData();
+            Bitmap bitmap = page.getBitmap();
+            page.setBitmap(null);
+            if (bitmap != null && !bitmap.isRecycled()) {
+                bitmap.recycle();
+            }
         }
+        super.onViewRecycled(holder);
     }
 
     public void setPageList(List<Resource<EpubPage>> pageList) {
@@ -141,7 +147,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         ImageView mPageView;
         View mLoadingStatus;
-        ProgressBar mLoadingView;
+        View mLoadingView;
         TextView mTvMessage;
         Button mBtnRetry;
 
@@ -149,7 +155,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             mPageView = itemView.findViewById(R.id.page_view);
             mLoadingStatus = itemView.findViewById(R.id.loading_status);
-            mLoadingView = itemView.findViewById(R.id.loading_view);
+            mLoadingView = itemView.findViewById(R.id.pb_loading);
             mTvMessage = itemView.findViewById(R.id.tv_message);
             mBtnRetry = itemView.findViewById(R.id.btn_retry);
         }
