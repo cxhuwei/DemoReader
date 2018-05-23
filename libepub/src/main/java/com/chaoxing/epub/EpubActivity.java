@@ -133,10 +133,10 @@ public class EpubActivity extends AppCompatActivity {
         String fontPath = null;
         try {
             fontPath = getFontPath(this);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        if(fontPath == null){
+        if (fontPath == null) {
             return;
         }
         EpubDocument.get().nativeSetFontResource(new String[]{fontPath, fontPath});
@@ -144,6 +144,9 @@ public class EpubActivity extends AppCompatActivity {
         binding.setDensity(getResources().getDisplayMetrics().density);
         binding.setWidth(mDocumentPager.getWidth());
         binding.setHeight(mDocumentPager.getHeight());
+        EpubDocument.get().nativeLayout(binding.getWidth(), binding.getHeight(), 0, 0, binding.getWidth(), binding.getHeight(), binding.getDensity());
+        EpubDocument.get().nativeSetBackgroundColor(Color.WHITE);
+        EpubDocument.get().nativeSetTextLevel(0);
         EpubDocument.get().nativeOpenDocument(binding.getPath());
 //        mViewModel.openDocument();
 
