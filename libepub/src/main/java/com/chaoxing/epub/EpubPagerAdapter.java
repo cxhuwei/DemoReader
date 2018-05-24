@@ -2,6 +2,7 @@ package com.chaoxing.epub;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,8 @@ import java.util.List;
  * Created by HUWEI on 2018/4/27.
  */
 public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String TAG = EpubActivity.TAG + "_" + EpubPagerAdapter.class.getSimpleName();
 
     private List<Resource<EpubPage>> mPageList;
 
@@ -40,6 +43,7 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         PageViewHolder viewHolder = (PageViewHolder) holder;
         Resource<EpubPage> resourcePage = mPageList.get(position);
+        viewHolder.mResourcePage = resourcePage;
         EpubPage page = resourcePage.getData();
 
         viewHolder.mTvPageNumber.setText(page.getFileId() + "/" + page.getPageNumber());
@@ -104,27 +108,31 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        int position = holder.getAdapterPosition();
-        if (position >= 0 && position < mPageList.size()) {
-            EpubPage page = mPageList.get(position).getData();
-            Log.i(EpubActivity.TAG, String.format("onPageRecycled : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
-            Bitmap bitmap = page.getBitmap();
-            page.setBitmap(null);
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
+        PageViewHolder viewHolder = (PageViewHolder) holder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mPageListener != null) {
+                mPageListener.recyclePage(holder.getAdapterPosition());
+            }
+        } else {
+            if (mPageListener != null) {
+                mPageListener.recyclePageBefore21(viewHolder.mResourcePage);
             }
         }
+
+        StringBuilder builder = new StringBuilder("onPageRecycled : \n");
+        for (Resource<EpubPage> page : mPageList) {
+            if (page.getData().getBitmap() != null && !page.getData().getBitmap().isRecycled()) {
+                builder.append("fileId:").append(page.getData().getFileId())
+                        .append(" page number:").append(page.getData().getPageNumber()).append("\n");
+            }
+        }
+        Log.i(TAG, builder.toString());
         super.onViewRecycled(holder);
     }
 
     public void setPageList(List<Resource<EpubPage>> pageList) {
-        if (mPageList == null) {
-            mPageList = pageList;
-            notifyItemRangeRemoved(0, pageList.size());
-        } else {
-            mPageList = pageList;
-            notifyDataSetChanged();
-        }
+        mPageList = pageList;
+        notifyDataSetChanged();
     }
 
     public void updatePage(Resource<EpubPage> newResourcePage) {
@@ -139,11 +147,12 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             }
         }
-        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
 
     static class PageViewHolder extends RecyclerView.ViewHolder {
 
+        Resource<EpubPage> mResourcePage;
         ImageView mPageView;
         View mLoadingStatus;
         View mLoadingView;

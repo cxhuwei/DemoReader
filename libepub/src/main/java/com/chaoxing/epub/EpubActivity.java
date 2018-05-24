@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -341,9 +342,11 @@ public class EpubActivity extends AppCompatActivity {
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mOnSystemUiVisibilityChangeListener);
     }
 
+    int pagePosition = 0;
+
     private void notifyPageCountChanged() {
         List<Resource<EpubPage>> pageList = new ArrayList<>();
-        int pagePosition = 0;
+
         DocumentBinding documentBinding = mViewModel.getDocumentBinding();
 
         int prevFileId;
@@ -352,10 +355,16 @@ public class EpubActivity extends AppCompatActivity {
         if (mPagerAdapter.getItemCount() > 0) {
             LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
             int position = layoutManager.findFirstVisibleItemPosition();
-            EpubPage currentPage = mPagerAdapter.getItemAtPosition(position).getData();
-            prevFileId = currentPage.getFileId() - 1;
-            currentFileId = currentPage.getFileId();
-            nextFileId = currentPage.getFileId() + 1;
+            if (position >= 0 && position < mPagerAdapter.getItemCount()) {
+                EpubPage currentPage = mPagerAdapter.getItemAtPosition(position).getData();
+                prevFileId = currentPage.getFileId() - 1;
+                currentFileId = currentPage.getFileId();
+                nextFileId = currentPage.getFileId() + 1;
+            } else {
+                prevFileId = -1;
+                currentFileId = 0;
+                nextFileId = 1;
+            }
         } else {
             prevFileId = -1;
             currentFileId = 0;
@@ -406,9 +415,21 @@ public class EpubActivity extends AppCompatActivity {
             }
         }
 
-        mPagerAdapter.setPageList(pageList);
-        mDocumentPager.scrollToPosition(pagePosition);
-        checkEmptyAdapter();
+        if (!mDocumentPager.isComputingLayout()) {
+            mPagerAdapter.setPageList(pageList);
+            mDocumentPager.scrollToPosition(pagePosition);
+            checkEmptyAdapter();
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPagerAdapter.setPageList(pageList);
+                    mDocumentPager.scrollToPosition(pagePosition);
+                    checkEmptyAdapter();
+                }
+            });
+        }
+
     }
 
     private void checkEmptyAdapter() {
@@ -672,6 +693,64 @@ public class EpubActivity extends AppCompatActivity {
             }
         }
 
+        @Override
+        public void recyclePage(int position) {
+            if (position >= 0 && position < mPagerAdapter.getItemCount()) {
+                EpubPage page = mPagerAdapter.getItemAtPosition(position).getData();
+                Bitmap bitmap = page.getBitmap();
+                page.setBitmap(null);
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                    Log.i(TAG, String.format("recyclePage : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+                }
+            }
+        }
+
+        @Override
+        public void recyclePageBefore21(Resource<EpubPage> resourcePage) {
+            if (resourcePage != null) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
+                int[] positions = {layoutManager.findFirstVisibleItemPosition(),
+                        layoutManager.findFirstCompletelyVisibleItemPosition(),
+                        layoutManager.findLastVisibleItemPosition(),
+                        layoutManager.findLastCompletelyVisibleItemPosition()};
+                doRecyclePageBefor21(resourcePage, positions);
+                Log.i(TAG, "recyclePage : " + positions[0] + " " + positions[1] + " " + positions[2] + " " + positions[3]);
+            }
+        }
+
+        private void doRecyclePageBefor21(Resource<EpubPage> resourcePage, int[] positions) {
+            EpubPage page = resourcePage.getData();
+            if (page.getBitmap() == null || page.getBitmap().isRecycled()) {
+                return;
+            }
+
+            List<Resource<EpubPage>> positionPageList = new ArrayList<>();
+            for (int i = 0; i < positions.length; i++) {
+                int position = positions[i];
+                if (position >= 0 && position < mPagerAdapter.getItemCount()) {
+                    positionPageList.add(mPagerAdapter.getItemAtPosition(position));
+                }
+            }
+            boolean recyclable = true;
+            for (Resource<EpubPage> positionResource : positionPageList) {
+                EpubPage positionPage = positionResource.getData();
+                if (positionPage != null) {
+                    if (page.getFileId() == positionPage.getFileId() && page.getPageNumber() == positionPage.getPageNumber()) {
+                        recyclable = false;
+                        break;
+                    }
+                }
+            }
+
+            if (recyclable) {
+                Bitmap bitmap = page.getBitmap();
+                page.setBitmap(null);
+                bitmap.recycle();
+                Log.i(TAG, String.format("recyclePage : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+            }
+        }
+
     };
 
     @Override
@@ -787,12 +866,18 @@ public class EpubActivity extends AppCompatActivity {
                 mViewModel.removeLoadingPage(new PageKey(page.getFileId(), page.getPageNumber()));
             }
             mViewModel.getDocumentBinding().updatePage(resource);
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mPagerAdapter.updatePage(resource);
-                }
-            });
+
+            if (!mDocumentPager.isComputingLayout()) {
+                mPagerAdapter.updatePage(resource);
+            } else {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPagerAdapter.updatePage(resource);
+                    }
+                });
+            }
+
         }
     };
 
