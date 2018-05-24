@@ -362,22 +362,22 @@ public class EpubActivity extends AppCompatActivity {
             nextFileId = 1;
         }
 
-        List<Resource<EpubPage>> prevFilePages = documentBinding.getResourcePagesByFileId(prevFileId);
-        List<Resource<EpubPage>> currentFilePages = documentBinding.getResourcePagesByFileId(currentFileId);
-        List<Resource<EpubPage>> nextFilePages = documentBinding.getResourcePagesByFileId(nextFileId);
-
-        if (prevFileId >= 0) {
+        while (prevFileId >= 0) {
+            List<Resource<EpubPage>> prevFilePages = documentBinding.getResourcePagesByFileId(prevFileId);
             if (prevFilePages == null) {
                 EpubPage page = new EpubPage();
                 page.setFileId(prevFileId);
                 page.setPageType(EpubPage.PageType.FILE);
                 page.setPageNumber(-1);
                 pageList.add(Resource.idle(page));
+                break;
             } else {
                 pageList.addAll(prevFilePages);
+                prevFileId--;
             }
         }
 
+        List<Resource<EpubPage>> currentFilePages = documentBinding.getResourcePagesByFileId(currentFileId);
         if (currentFilePages == null) {
             EpubPage page = new EpubPage();
             page.setFileId(currentFileId);
@@ -389,15 +389,20 @@ public class EpubActivity extends AppCompatActivity {
         }
         pagePosition = pageList.size() - 1;
 
-        if (currentFilePages != null && nextFileId < documentBinding.getFileCount()) {
-            if (nextFilePages == null) {
-                EpubPage page = new EpubPage();
-                page.setFileId(nextFileId);
-                page.setPageType(EpubPage.PageType.FILE);
-                page.setPageNumber(0);
-                pageList.add(Resource.idle(page));
-            } else {
-                pageList.addAll(nextFilePages);
+        if (currentFilePages != null) {
+            while (nextFileId < documentBinding.getFileCount()) {
+                List<Resource<EpubPage>> nextFilePages = documentBinding.getResourcePagesByFileId(nextFileId);
+                if (nextFilePages == null) {
+                    EpubPage page = new EpubPage();
+                    page.setFileId(nextFileId);
+                    page.setPageType(EpubPage.PageType.FILE);
+                    page.setPageNumber(0);
+                    pageList.add(Resource.idle(page));
+                    break;
+                } else {
+                    pageList.addAll(nextFilePages);
+                    nextFileId++;
+                }
             }
         }
 
