@@ -1,6 +1,5 @@
-#include "StdAfx.h"
+
 #include "ZLFile.h"
-#include "zlib.h"
 #include "MAlgorithm.h"
 #include "ThreadPacket.h"
 #include "StringConver.h"
@@ -225,20 +224,21 @@ int CZLFile::Parser(void) {
     int anchorNumber(0);
     if (!m_isLastOpen) {//�ϴ�û�򿪹������н���
         LOGI("CZLFile::Parser | 1");
-        CHtmlParser par(this->m_DataFile, this->m_DataLength, &m_vHtmlNode);
+        CHtmlParser* par = new CHtmlParser(this->m_DataFile, this->m_DataLength, &m_vHtmlNode);
+        //CHtmlParser par(this->m_DataFile, this->m_DataLength, &m_vHtmlNode);
         LOGI("CZLFile::Parser | 2");
         m_mAnchorNameContentNumber.clear();
         LOGI("CZLFile::Parser | 3");
-        par.PutAnchor(&m_mAnchorNameContentNumber);
+        par->PutAnchor(&m_mAnchorNameContentNumber);
         LOGI("CZLFile::Parser | 4");
-        if (par.ParserHtml()) {
+        if (par->ParserHtml()) {
             LOGI("CZLFile::Parser | 5 1");
-            m_HtmlTitle = par.m_title;
+            m_HtmlTitle = par->m_title;
             //��html�ڲ�css��ʽ�ŵ�m_mcss�
-            m_MCSS = par.m_inlineMCSS;
-            m_isHaveCSS = par.IsHaveCSS();
+            m_MCSS = par->m_inlineMCSS;
+            m_isHaveCSS = par->IsHaveCSS();
             LOGI("CZLFile::Parser | 5 2");
-            vector<string> tempcss = par.ReturnCSSFilePath();
+            vector<string> tempcss = par->ReturnCSSFilePath();
             LOGI("CZLFile::Parser | 5 3");
             //m_cssFile = MergePath(tempcss,m_curDir);
             m_cssFile = m_curDir;
@@ -247,10 +247,11 @@ int CZLFile::Parser(void) {
                 m_vCssFiles.push_back(m_cssFile);
             }
             LOGI("CZLFile::Parser | 5 4");
-
+            delete par;
             //	return 0;
         } else {
-            LOGI("CZLFile::Parser | 5 2");
+            delete par;
+            LOGI("CZLFile::Parser | 6 2");
             if (m_DataFile != NULL) {
                 free(m_DataFile);
                 m_DataFile = NULL;

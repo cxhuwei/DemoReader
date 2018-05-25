@@ -233,9 +233,9 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeLayou
     SZEbookReader *bookReader = GetBookReader(env, obj);
 
     bookReader->SetMrginLeft(mrginLeft);
-    bookReader->SetMrginRight(mrginRight);
+    bookReader->SetMrginRight(width-mrginRight);
     bookReader->SetMrginTop(mrginTop);
-    bookReader->SetMrginBottom(mrginBottom);
+    bookReader->SetMrginBottom(height -mrginBottom);
 
     bookReader->Init(width, height, density == 1.0 ? NormalScreen : HDScreen);
     if (density != 1.0) {
@@ -407,8 +407,8 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
     SZImageBit24 bmp;
     t_PageOutData pageOutData;
 
-    jbyte *bitmapData = (jbyte *) bookReader->GetPageByFileSmallPageNumber(fileid, smallPageNumber,
-                                                                           bmp, lSize, pageOutData);
+    myBYTE * bitmapData/*jbyte *bitmapData*/ = (myBYTE *) bookReader->GetPageByFileSmallPageNumber(fileid, smallPageNumber,
+                                                                                                   bmp, lSize, pageOutData);
 
     if (bitmapData == NULL) {
         return 1;
@@ -439,13 +439,15 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
         return 5;
     }
 
-//    for (int y = 0; y < info.height; y++) {
-//        for (int x = 0; x < info.width; x++) {
-//            <#statements#>
-//        }
-//    }
+    for (int y = 0; y < info.height; y++) {
+        for (int x = 0; x < info.width; x++) {
+            void *pixel = ((uint32_t *)pixels) + y * info.width + x;
+            myRGBQUAD color = bmp.GetOriPixel(x,bmp.m_iHeight-y-1);
+            *((uint32_t *)pixel) = MAKE_RGBA(color.rgbRed, color.rgbGreen,color.rgbBlue, color.rgbReserved);
+        }
+    }
 
-    memcpy(pixels, bitmapData, lSize);
+    //memcpy(pixels, bitmapData, lSize);
 
     AndroidBitmap_unlockPixels(env, bitmapObj);
     return 0;

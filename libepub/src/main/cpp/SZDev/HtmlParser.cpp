@@ -26,10 +26,10 @@ const myBYTE CHtmlParser::ENTITY_REF = 20;
 const myBYTE CHtmlParser::STYLE = 21;
 const myBYTE CHtmlParser::STYLECONTENT = 22;
 CHtmlParser::CHtmlParser(myBYTE* szHtml,int len,VtHTMLNode* htmlNode): m_isFindEncoding(false),m_encoding(UTF8)
-, m_isHaveCSS(false)
-, m_anchorNumber(-1)
-, m_isCurTitle(false)
-, m_isBody(false)
+		, m_isHaveCSS(false)
+		, m_anchorNumber(-1)
+		, m_isCurTitle(false)
+		, m_isBody(false)
 {
 	InitMapTagType();
 	m_szHtml = szHtml;
@@ -38,11 +38,11 @@ CHtmlParser::CHtmlParser(myBYTE* szHtml,int len,VtHTMLNode* htmlNode): m_isFindE
 	m_title = NULL;
 }
 CHtmlParser::CHtmlParser(): m_isFindEncoding(false),m_encoding(UTF8)
-, m_isHaveCSS(false)
-, m_anchorNumber(-1)
-, m_isCurTitle(false)
-, m_isBody(false)
-,m_isH(false)
+		, m_isHaveCSS(false)
+		, m_anchorNumber(-1)
+		, m_isCurTitle(false)
+		, m_isBody(false)
+		,m_isH(false)
 {
 	InitMapTagType();
 	m_szHtml = NULL;
@@ -64,9 +64,9 @@ CHtmlParser::~CHtmlParser(void)
 
 void CHtmlParser::InitMapTagType()
 {
- 	m_mapTagType.insert(std::pair<string,HTMLTagType>("a",TAG_A));
+	m_mapTagType.insert(std::pair<string,HTMLTagType>("a",TAG_A));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("b",TAG_B));
-  	m_mapTagType.insert(std::pair<string,HTMLTagType>("br",TAG_BR));
+	m_mapTagType.insert(std::pair<string,HTMLTagType>("br",TAG_BR));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("div",TAG_DIV));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("font",TAG_FONT));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("h1",TAG_H1));
@@ -81,7 +81,7 @@ void CHtmlParser::InitMapTagType()
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("image",TAG_IMG));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("span",TAG_SPAN));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("script",TAG_SCRIPT));
-	m_mapTagType.insert(std::pair<string,HTMLTagType>("style",TAG_STYLE));	
+	m_mapTagType.insert(std::pair<string,HTMLTagType>("style",TAG_STYLE));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("p",TAG_P));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("ul",TAG_UL));
 	m_mapTagType.insert(std::pair<string,HTMLTagType>("li",TAG_LI));
@@ -92,16 +92,16 @@ void CHtmlParser::InitMapTagType()
 	m_entity.insert(pair<string,string>("&gt;",">"));
 	m_entity.insert(pair<string,string>("&amp;","&"));
 	m_entity.insert(pair<string,string>("&quot;","\""));
-	m_entity.insert(pair<string,string>("&times;","°¡"));
-	m_entity.insert(pair<string,string>("&divide;","°¬"));
+	m_entity.insert(pair<string,string>("&times;","√ó"));
+	m_entity.insert(pair<string,string>("&divide;","√∑"));
 
 	m_entity.insert(pair<string,string>("&#160;"," "));
 	m_entity.insert(pair<string,string>("&#60;","<"));
 	m_entity.insert(pair<string,string>("&#62;",">"));
 	m_entity.insert(pair<string,string>("&#38;","&"));
 	m_entity.insert(pair<string,string>("&#34;","\""));
-	m_entity.insert(pair<string,string>("&#215;","°¡"));
-	m_entity.insert(pair<string,string>("&#247;","°¬"));
+	m_entity.insert(pair<string,string>("&#215;","√ó"));
+	m_entity.insert(pair<string,string>("&#247;","√∑"));
 
 
 }
@@ -130,13 +130,13 @@ bool CHtmlParser::ParserHtml(void)
 	}
 	m_anchorNumber = -1;
 	int HtmlOffset(0);
-	int offset(0);//œ¬±Í∆´“∆¡ø
+	int offset(0);//‰∏ãÊ†áÂÅèÁßªÈáè
 	int startPosition(0);
 	bool scriptOpened = false;
 	bool style = false;
 	char* s_tag=0;
 	char* e_tag=0;
-	char* s_script=0;//script«¯”Ú÷∏ æ
+	char* s_script=0;//scriptÂå∫ÂüüÊåáÁ§∫
 	char* e_script=0;
 	myBYTE state = START_DOCUMENT;
 	/*CByteBuffer*/string tagName;
@@ -145,51 +145,51 @@ bool CHtmlParser::ParserHtml(void)
 	/*CByteBuffer*/string textData;
 	vector<HTMLNodeProp> attributes;
 	HTMLNodeProp t_attribute;
-	
-	
+
+
 
 	for(int i = -1;i<m_dataLength;)
 	{
-mainSwitchLabel:
-	switch(state)
-	{
-	case START_DOCUMENT:
-		while(m_szHtml[++i] != '<'){}
-		state = LANGLE;
-		break;
-	case LANGLE:
-		
-		//offset = HtmlOffset + i;
-		switch(m_szHtml[++i])
+		mainSwitchLabel:
+		switch(state)
 		{
-		case '/':
-			state = END_TAG;
-			startPosition = i + 1;
-			break;
-		case '!':
-			//{
+			case START_DOCUMENT:
+				while(m_szHtml[++i] != '<'){}
+				state = LANGLE;
+				break;
+			case LANGLE:
+
+				//offset = HtmlOffset + i;
 				switch(m_szHtml[++i])
 				{
-				case '-':
-					state = COMMENT_MINUS;
-					i--;
-					break;
-				default:
-					state = COMMENT;
-					break;
+					case '/':
+						state = END_TAG;
+						startPosition = i + 1;
+						break;
+					case '!':
+						//{
+						switch(m_szHtml[++i])
+						{
+							case '-':
+								state = COMMENT_MINUS;
+								i--;
+								break;
+							default:
+								state = COMMENT;
+								break;
+						}
+						//}
+						break;
+					case '?':
+						state = COMMENT;
+						break;
+					default:
+						state = START_TAG;
+						startPosition = i;
+						break;
 				}
-			//}
-			break;
-		case '?':
-			state = COMMENT;
-			break;
-		default:
-			state = START_TAG;
-			startPosition = i;
-			break;
-		}
-		break;
-		case SCRIPT:
+				break;
+			case SCRIPT:
 // 			while(true)
 // 			{
 				if (m_szHtml[++i] == '<')
@@ -203,71 +203,71 @@ mainSwitchLabel:
 					}
 				}
 				break;
-		//	}
-		case COMMENT_MINUS:
+				//	}
+			case COMMENT_MINUS:
 			{
 				int minusCounter = 0;
 				while(minusCounter != 2)
 				{
 					switch(m_szHtml[++i])
 					{
-					case '-':
-						minusCounter++;
-						break;
-					default:
-						minusCounter = 0;
-						break;
+						case '-':
+							minusCounter++;
+							break;
+						default:
+							minusCounter = 0;
+							break;
 					}
 				}
 				switch(m_szHtml[++i])
 				{
-				case '>':
-					state = TEXT;
-					startPosition = i + 1;
-					goto mainSwitchLabel;
+					case '>':
+						state = TEXT;
+						startPosition = i + 1;
+						goto mainSwitchLabel;
 				}
 			}
-		case COMMENT:
+			case COMMENT:
 // 			while(true)
 // 			{
 				switch(m_szHtml[++i])
 				{
-				case '>':
-					if (!m_isFindEncoding)
-					{
-						char* temp = new char[i - startPosition + 1];
-						if (temp)
+					case '>':
+						if (!m_isFindEncoding)
 						{
-							memcpy(temp,m_szHtml+startPosition,i-startPosition);
-							temp[i - startPosition] = 0;
-							m_encoding = GetEncoding(temp);
+							char* temp = new char[i - startPosition + 1];
+							if (temp)
+							{
+								memcpy(temp,m_szHtml+startPosition,i-startPosition);
+								temp[i - startPosition] = 0;
+								m_encoding = GetEncoding(temp);
+							}
+							else
+								m_encoding = UNKNOWN;
+							if (m_encoding != UNKNOWN)
+							{
+								m_isFindEncoding = true;
+							}
+							if (temp)
+							{
+								delete[] temp;
+								temp = NULL;
+							}
 						}
-						else
-							m_encoding = UNKNOWN;
-						if (m_encoding != UNKNOWN)
-						{
-							m_isFindEncoding = true;
-						}
-						if (temp)
-						{
-							delete[] temp;
-							temp = NULL;
-						}
-					}
-					
-					state = TEXT;
-					startPosition = i + 1;
-					//goto mainSwitchLabel;
-					break;
+
+						state = TEXT;
+						startPosition = i + 1;
+						//goto mainSwitchLabel;
+						break;
 				}
 				break;
-			//}
-		case START_TAG:
+				//}
+			case START_TAG:
 			{
 // 				while(true)
 // 				{
-					switch(m_szHtml[++i])
-					{
+				switch(m_szHtml[++i])
+				{
 					case 0x0008:
 					case 0x0009:
 					case 0x000A:
@@ -287,133 +287,133 @@ mainSwitchLabel:
 						//goto mainSwitchLabel;
 						break;
 					case '>':
+					{
+						state = TEXT;
+						tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
+						if (/*tagName.Equals("style")*/tagName == "style")
 						{
-							state = TEXT;
-							tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
-							if (/*tagName.Equals("style")*/tagName == "style")
-							{
-								state = STYLE;
-								break;
-							}
-							//tagName.Append(m_szHtml,startPosition,i - startPosition);
-							 ProcessStartTag(tagName,attributes);
-							if (/*tagName.Equals("script")*/tagName == "script")
-							{
-								state = SCRIPT;
-								scriptOpened = true;
-								break;
-							}
-							//tagName.Clear();
-							tagName.erase(tagName.begin(),tagName.end());
-							startPosition = i + 1;
-							break;
-							
-						}
-					case '/':
-						{
-							state = SLASH;
-							tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
-							//tagName.Append(m_szHtml,startPosition,i - startPosition);
-						
+							state = STYLE;
 							break;
 						}
+						//tagName.Append(m_szHtml,startPosition,i - startPosition);
+						ProcessStartTag(tagName,attributes);
+						if (/*tagName.Equals("script")*/tagName == "script")
+						{
+							state = SCRIPT;
+							scriptOpened = true;
+							break;
+						}
+						//tagName.Clear();
+						tagName.erase(tagName.begin(),tagName.end());
+						startPosition = i + 1;
+						break;
+
 					}
+					case '/':
+					{
+						state = SLASH;
+						tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
+						//tagName.Append(m_szHtml,startPosition,i - startPosition);
+
+						break;
+					}
+				}
 				//}
-					break;
+				break;
 			}
-		case END_TAG:
+			case END_TAG:
 // 			while(true)
 // 			{
 				switch(m_szHtml[++i])
 				{
-				case 0x0008:
-				case 0x0009:
-				case 0x000A:
-				case 0x000B:
-				case 0x000C:
-				case 0x000D:
-				case ' ':
-					state = WS_AFTER_END_TAG_NAME;
-					tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
-					//tagName.Append(m_szHtml,startPosition, i - startPosition);
-					break;
-				case '>':
-					tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
-					//tagName.Append(m_szHtml,startPosition,i - startPosition);
-					if (/*!tagName.Equals("style")*/tagName != "style")
-					{
-						 ProcessEndTag(tagName,attributes);
-					}
-					
-					
-					if (/*tagName.Equals("script")*/tagName == "script")
-					{
-						scriptOpened = false;
-					}
-					else if (tagName == "html")
-					{
-						return true;
-					}
-					if (scriptOpened)
-					{
-						state = SCRIPT;
-					}
-					else
-					{
+					case 0x0008:
+					case 0x0009:
+					case 0x000A:
+					case 0x000B:
+					case 0x000C:
+					case 0x000D:
+					case ' ':
+						state = WS_AFTER_END_TAG_NAME;
+						tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
+						//tagName.Append(m_szHtml,startPosition, i - startPosition);
+						break;
+					case '>':
+						tagName.append((char*)(m_szHtml + startPosition),i - startPosition);
+						//tagName.Append(m_szHtml,startPosition,i - startPosition);
+						if (/*!tagName.Equals("style")*/tagName != "style")
+						{
+							ProcessEndTag(tagName,attributes);
+						}
+
+
+						if (/*tagName.Equals("script")*/tagName == "script")
+						{
+							scriptOpened = false;
+						}
+						else if (tagName == "html")
+						{
+							return true;
+						}
+						if (scriptOpened)
+						{
+							state = SCRIPT;
+						}
+						else
+						{
+							state = TEXT;
+							startPosition = i + 1;
+						}
+						//tagName.Clear();
+						tagName.erase(tagName.begin(),tagName.end());
+						break;
+				}
+				break;
+				//}
+			case WS_AFTER_START_TAG_NAME:
+				switch(m_szHtml[++i])
+				{
+					case '>':
+
+						ProcessStartTag(tagName,attributes);
+						if (/*tagName.Equals("script")*/tagName == "script")
+						{
+							state = SCRIPT;
+							scriptOpened = true;
+							break;
+
+						}
+						//tagName.Clear();
+						tagName.erase(tagName.begin(),tagName.end());
 						state = TEXT;
 						startPosition = i + 1;
-					}
-					//tagName.Clear();
-					tagName.erase(tagName.begin(),tagName.end());
-					break;
+						break;
+					case '/':
+						state = SLASH;
+						break;
+					case 0x0008:
+					case 0x0009:
+					case 0x000A:
+					case 0x000B:
+					case 0x000C:
+					case 0x000D:
+					case ' ':
+						break;
+					default:
+						state = ATTRIBUTE_NAME;
+						startPosition = i;
+						break;
 				}
 				break;
-			//}
-		case WS_AFTER_START_TAG_NAME:
-			switch(m_szHtml[++i])
-			{
-			case '>':
-			
-				 ProcessStartTag(tagName,attributes);
-				if (/*tagName.Equals("script")*/tagName == "script")
-				{
-					state = SCRIPT;
-					scriptOpened = true;
-					break;
-						
-				}
-				//tagName.Clear();
-				tagName.erase(tagName.begin(),tagName.end());
-				state = TEXT;
-				startPosition = i + 1;
-				break;
-			case '/':
-				state = SLASH;
-				break;
-			case 0x0008:
-			case 0x0009:
-			case 0x000A:
-			case 0x000B:
-			case 0x000C:
-			case 0x000D:
-			case ' ':
-				break;
-			default:
-				state = ATTRIBUTE_NAME;
-				startPosition = i;
-				break;
-			}
-			break;
 			case WS_AFTER_END_TAG_NAME:
 				switch(m_szHtml[++i])
 				{
-				case '>':
+					case '>':
 					{
 						if (/*!tagName.Equals("style")*/tagName != "style")
 						{
-							 ProcessEndTag(tagName,attributes);
+							ProcessEndTag(tagName,attributes);
 						}
-						
+
 						if (/*tagName.Equals("script")*/tagName == "script")
 						{
 							scriptOpened = false;
@@ -421,250 +421,250 @@ mainSwitchLabel:
 						//tagName.Clear();
 						tagName.erase(tagName.begin(),tagName.end());
 					}
-					if (scriptOpened)
-					{
-						state = SCRIPT;
-					}
-					else
-					{
-						state = TEXT;
-						startPosition = i + 1;
-					}
-					break;
+						if (scriptOpened)
+						{
+							state = SCRIPT;
+						}
+						else
+						{
+							state = TEXT;
+							startPosition = i + 1;
+						}
+						break;
 				}
 				break;
-				case ATTRIBUTE_NAME:
+			case ATTRIBUTE_NAME:
 // 					while (true)
 // 					{
-						switch(m_szHtml[++i])
-						{
-						case '=':
-							attributeName.append((char*)(m_szHtml + startPosition),i-startPosition);
-							//attributeName.Append(m_szHtml,startPosition,i - startPosition);
-							state = WAIT_ATTRIBUTE_VALUE;
-							break;
-						case 0x0008:
-						case 0x0009:
-						case 0x000A:
-						case 0x000B:
-						case 0x000C:
-						case 0x000D:
-						case ' ':
-							attributeName.append((char*)(m_szHtml + startPosition),i-startPosition);
-							//attributeName.Append(m_szHtml,startPosition,i - startPosition);
-							state = WAIT_EQUALS;
-							break;
-							//goto mainSwitchLabel;
-						}
+				switch(m_szHtml[++i])
+				{
+					case '=':
+						attributeName.append((char*)(m_szHtml + startPosition),i-startPosition);
+						//attributeName.Append(m_szHtml,startPosition,i - startPosition);
+						state = WAIT_ATTRIBUTE_VALUE;
 						break;
-					//}
-				case WAIT_EQUALS:
+					case 0x0008:
+					case 0x0009:
+					case 0x000A:
+					case 0x000B:
+					case 0x000C:
+					case 0x000D:
+					case ' ':
+						attributeName.append((char*)(m_szHtml + startPosition),i-startPosition);
+						//attributeName.Append(m_szHtml,startPosition,i - startPosition);
+						state = WAIT_EQUALS;
+						break;
+						//goto mainSwitchLabel;
+				}
+				break;
+				//}
+			case WAIT_EQUALS:
 // 					while(true)
 // 					{
-						switch(m_szHtml[++i])
-						{
-						case '=':
-							state = WAIT_ATTRIBUTE_VALUE;
-							//goto mainSwitchLabel;
-						}
-						break;
-					//}
-				case WAIT_ATTRIBUTE_VALUE:
+				switch(m_szHtml[++i])
+				{
+					case '=':
+						state = WAIT_ATTRIBUTE_VALUE;
+						//goto mainSwitchLabel;
+				}
+				break;
+				//}
+			case WAIT_ATTRIBUTE_VALUE:
 // 					while(true)
 // 					{
-						switch(m_szHtml[++i])
-						{
-						case ' ':
-							break;
-						case '\t':
-							break;
-						case '\n':
-							break;
-						case '\'':
-							state = S_ATTRIBUTE_VALUE;
-							startPosition = i + 1;
-							break;
-							//goto mainSwitchLabel;
-						case '"':
-							state = D_ATTRIBUTE_VALUE;
-							startPosition = i + 1;
-							break;
-							//goto mainSwitchLabel;
-						default:
-							state = DEFAULT_ATTRIBUTE_VALUE;
-							startPosition = i + 1;
-							break;
-							//goto mainSwitchLabel;
-						}
+				switch(m_szHtml[++i])
+				{
+					case ' ':
 						break;
-					//}
-				case DEFAULT_ATTRIBUTE_VALUE:
+					case '\t':
+						break;
+					case '\n':
+						break;
+					case '\'':
+						state = S_ATTRIBUTE_VALUE;
+						startPosition = i + 1;
+						break;
+						//goto mainSwitchLabel;
+					case '"':
+						state = D_ATTRIBUTE_VALUE;
+						startPosition = i + 1;
+						break;
+						//goto mainSwitchLabel;
+					default:
+						state = DEFAULT_ATTRIBUTE_VALUE;
+						startPosition = i + 1;
+						break;
+						//goto mainSwitchLabel;
+				}
+				break;
+				//}
+			case DEFAULT_ATTRIBUTE_VALUE:
 // 					while(true)
 // 					{
-						i++;
-						if (m_szHtml[i] == ' ' || m_szHtml[i] == '\'' || m_szHtml[i] == '"' || m_szHtml[i] == '>')
-						{
-							attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
-							//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
-							t_attribute.HTMLNodePropName(attributeName);
-							t_attribute.HTMLNodePropValue(attributeValue);
-							attributes.push_back(t_attribute);
-							attributeName.erase(attributeName.begin(),attributeName.end());
-							attributeValue.erase(attributeValue.begin(),attributeValue.end());
+				i++;
+				if (m_szHtml[i] == ' ' || m_szHtml[i] == '\'' || m_szHtml[i] == '"' || m_szHtml[i] == '>')
+				{
+					attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
+					//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
+					t_attribute.HTMLNodePropName(attributeName);
+					t_attribute.HTMLNodePropValue(attributeValue);
+					attributes.push_back(t_attribute);
+					attributeName.erase(attributeName.begin(),attributeName.end());
+					attributeValue.erase(attributeValue.begin(),attributeValue.end());
 // 							attributeName.Clear();
 // 							attributeValue.Clear();
-						}
-						switch(m_szHtml[i])
+				}
+				switch(m_szHtml[i])
+				{
+					case ' ':
+					case '\'':
+					case '"':
+						state = WS_AFTER_START_TAG_NAME;
+						break;
+						//goto mainSwitchLabel;
+					case '/':
+						state = SLASH;
+						break;
+						//goto mainSwitchLabel;
+					case '>':
+						ProcessStartTag(tagName,attributes);
+						if (/*tagName.Equals("script")*/tagName == "script")
 						{
-						case ' ':
-						case '\'':
-						case '"':
-							state = WS_AFTER_START_TAG_NAME;
-							break;
-							//goto mainSwitchLabel;
-						case '/':
-							state = SLASH;
-							break;
-							//goto mainSwitchLabel;
-						case '>':
-							ProcessStartTag(tagName,attributes);
-							if (/*tagName.Equals("script")*/tagName == "script")
-							{
-								
-								scriptOpened = true;
-								state = SCRIPT;
-								goto mainSwitchLabel;
-							}
-							
-							//tagName.Clear();
-							tagName.erase(tagName.begin(),tagName.end());
-							state = TEXT;
-							startPosition = i + 1;
-							break;
 
+							scriptOpened = true;
+							state = SCRIPT;
+							goto mainSwitchLabel;
 						}
-						break;
-					//}
-				case D_ATTRIBUTE_VALUE:
-// 					while(true)
-// 					{
-						switch(m_szHtml[++i])
-						{
-						case '"':
-							attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
-							//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
-							state = WS_AFTER_START_TAG_NAME;
-							t_attribute.HTMLNodePropName(attributeName);
-							t_attribute.HTMLNodePropValue(attributeValue);
-							attributes.push_back(t_attribute);
-							attributeName.erase(attributeName.begin(),attributeName.end());
-							attributeValue.erase(attributeValue.begin(),attributeValue.end());
-// 							attributeValue.Clear();
-// 							attributeName.Clear();
-							//goto mainSwitchLabel;
-						}
-						break;
-				//	}
-				case S_ATTRIBUTE_VALUE:
-// 					while(true)
-// 					{
-						switch(m_szHtml[++i])
-						{
-						case '\'':
-							attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
-							//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
-							state = WS_AFTER_START_TAG_NAME;
-							t_attribute.HTMLNodePropName(attributeName);
-							t_attribute.HTMLNodePropValue(attributeValue);
-							attributes.push_back(t_attribute);
-							//attributes.insert(make_pair(attributeName,attributeValue));
-// 							attributeValue.Clear();
-// 							attributeName.Clear();
-							attributeName.erase(attributeName.begin(),attributeName.end());
-							attributeValue.erase(attributeValue.begin(),attributeValue.end());
-							//goto mainSwitchLabel;
-						}
-						break;
-					//}
-				case SLASH:
-// 					while(true)
-// 					{
-						switch(m_szHtml[++i])
-						{
-						case ' ':
-							break;
-						case '>':
-							state = TEXT;
-							ProcessFullTag(tagName,attributes);
-							//tagName.Clear();
-							tagName.erase(tagName.begin(),tagName.end());
-							startPosition = i + 1;
-							break;
-							//goto mainSwitchLabel;
-						default:
-							state = DEFAULT_ATTRIBUTE_VALUE;
-							break;
-							//goto mainSwitchLabel;
-						}
-						break;
-					//}
-				case TEXT:
-// 					while(true)
-// 					{
-						switch(m_szHtml[++i])
-						{
-						case '<':
-							if (i > startPosition)
-							{
-								if (textData.empty())
-								{
-									 TextData(m_szHtml,startPosition,i - startPosition);
-								}
-								else
-								{
-									
-									textData.append((char*)(m_szHtml + startPosition),i - startPosition - 1);
-									 TextData(textData);
-								}
-								textData.erase(textData.begin(),textData.end());
-								//textData.Append(m_szHtml,startPosition,i - startPosition);
-							}
-							state = LANGLE;
-							break;
-						case '&':
-							if (i > startPosition)
-							{
-								textData.append((char*)(m_szHtml + startPosition),i - startPosition);
-							}
-							state = ENTITY_REF;
-							startPosition = i+1;
-							break;
-						}
-						break;
-				case ENTITY_REF:
-					if (m_szHtml[++i] == ';')
-					{
-						string re = ProcessEntity(m_szHtml,startPosition,i - startPosition);
-						if (re != "")
-						{
-							textData.append(re);
-						}
+
+						//tagName.Clear();
+						tagName.erase(tagName.begin(),tagName.end());
 						state = TEXT;
 						startPosition = i + 1;
-					}
-					break;
-				case STYLE:
-					switch(m_szHtml[++i])
+						break;
+
+				}
+				break;
+				//}
+			case D_ATTRIBUTE_VALUE:
+// 					while(true)
+// 					{
+				switch(m_szHtml[++i])
+				{
+					case '"':
+						attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
+						//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
+						state = WS_AFTER_START_TAG_NAME;
+						t_attribute.HTMLNodePropName(attributeName);
+						t_attribute.HTMLNodePropValue(attributeValue);
+						attributes.push_back(t_attribute);
+						attributeName.erase(attributeName.begin(),attributeName.end());
+						attributeValue.erase(attributeValue.begin(),attributeValue.end());
+// 							attributeValue.Clear();
+// 							attributeName.Clear();
+						//goto mainSwitchLabel;
+				}
+				break;
+				//	}
+			case S_ATTRIBUTE_VALUE:
+// 					while(true)
+// 					{
+				switch(m_szHtml[++i])
+				{
+					case '\'':
+						attributeValue.append((char*)(m_szHtml + startPosition),i-startPosition);
+						//attributeValue.Append(m_szHtml,startPosition,i - startPosition);
+						state = WS_AFTER_START_TAG_NAME;
+						t_attribute.HTMLNodePropName(attributeName);
+						t_attribute.HTMLNodePropValue(attributeValue);
+						attributes.push_back(t_attribute);
+						//attributes.insert(make_pair(attributeName,attributeValue));
+// 							attributeValue.Clear();
+// 							attributeName.Clear();
+						attributeName.erase(attributeName.begin(),attributeName.end());
+						attributeValue.erase(attributeValue.begin(),attributeValue.end());
+						//goto mainSwitchLabel;
+				}
+				break;
+				//}
+			case SLASH:
+// 					while(true)
+// 					{
+				switch(m_szHtml[++i])
+				{
+					case ' ':
+						break;
+					case '>':
+						state = TEXT;
+						ProcessFullTag(tagName,attributes);
+						//tagName.Clear();
+						tagName.erase(tagName.begin(),tagName.end());
+						startPosition = i + 1;
+						break;
+						//goto mainSwitchLabel;
+					default:
+						state = DEFAULT_ATTRIBUTE_VALUE;
+						break;
+						//goto mainSwitchLabel;
+				}
+				break;
+				//}
+			case TEXT:
+// 					while(true)
+// 					{
+				switch(m_szHtml[++i])
+				{
+					case '<':
+						if (i > startPosition)
+						{
+							if (textData.empty())
+							{
+								TextData(m_szHtml,startPosition,i - startPosition);
+							}
+							else
+							{
+
+								textData.append((char*)(m_szHtml + startPosition),i - startPosition - 1);
+								TextData(textData);
+							}
+							textData.erase(textData.begin(),textData.end());
+							//textData.Append(m_szHtml,startPosition,i - startPosition);
+						}
+						state = LANGLE;
+						break;
+					case '&':
+						if (i > startPosition)
+						{
+							textData.append((char*)(m_szHtml + startPosition),i - startPosition);
+						}
+						state = ENTITY_REF;
+						startPosition = i+1;
+						break;
+				}
+				break;
+			case ENTITY_REF:
+				if (m_szHtml[++i] == ';')
+				{
+					string re = ProcessEntity(m_szHtml,startPosition,i - startPosition);
+					if (re != "")
 					{
+						textData.append(re);
+					}
+					state = TEXT;
+					startPosition = i + 1;
+				}
+				break;
+			case STYLE:
+				switch(m_szHtml[++i])
+				{
 					case '>':
 						startPosition = i + 1;
 						state = STYLECONTENT;
 						break;
-					}
-					break;
-				case STYLECONTENT:
-					switch(m_szHtml[++i])
-					{
+				}
+				break;
+			case STYLECONTENT:
+				switch(m_szHtml[++i])
+				{
 					case 0x0008:
 					case 0x0009:
 					case 0x000A:
@@ -680,8 +680,8 @@ mainSwitchLabel:
 						state = LANGLE;
 						break;
 
-					}
-					break;
+				}
+				break;
 
 		}
 	}
@@ -738,8 +738,8 @@ void CHtmlParser::ProcessFullTag(/*CByteBuffer*/string& tagName, vector<HTMLNode
 			m_isHaveCSS = false;
 		if (m_isHaveCSS)
 		{
-		for (int i=0;i<v_attributes.size();i++)
-		{
+			for (int i=0;i<v_attributes.size();i++)
+			{
 // 				if (strcmp(v_attributes[i].szName,"rel") == 0)
 // 				{
 // 					if (strcmp(v_attributes[i].szValue,"stylesheet") == 0)
@@ -758,11 +758,11 @@ void CHtmlParser::ProcessFullTag(/*CByteBuffer*/string& tagName, vector<HTMLNode
 // 					else
 // 						m_isHaveCSS = false;
 // 				}
- 				if (strcmp(v_attributes[i].szName,"href") == 0)
-			{
-				m_vCssFilePath.push_back(v_attributes[i].szValue);
+				if (strcmp(v_attributes[i].szName,"href") == 0)
+				{
+					m_vCssFilePath.push_back(v_attributes[i].szValue);
+				}
 			}
-			}	
 		}
 	}
 	ProcessTag(tagName,v_attributes,NODE_FULL_TAG,NULL,0);
@@ -816,7 +816,7 @@ HTMLTagType CHtmlParser::GetTagTypeByTagName(/*const char**/string tagName)
 	{
 		return TAG_UNKNOWN;
 	}
-	return iter->second; 
+	return iter->second;
 }
 
 void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp>& v_attributes, HTMLNodeType nodeType,const char* text,int textlength)
@@ -826,7 +826,7 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 	int attributNumber;
 	char* temp=NULL;
 	bool isPush=true;
-	
+
 	CStringConver stringCon;
 	HTMLNode node;
 	node.nodeType = nodeType;
@@ -837,8 +837,8 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 	node.tagName = new char[tagNameLength + 1];
 	if (nodeType == NODE_FULL_TAG || nodeType == NODE_CLOSE_TAG || nodeType == NODE_START_TAG)
 	{
-		if ((node.tagType == TAG_H1 || node.tagType == TAG_H2 || node.tagType == TAG_H3 
-			|| node.tagType == TAG_H4 || node.tagType == TAG_H5 || node.tagType == TAG_H6))
+		if ((node.tagType == TAG_H1 || node.tagType == TAG_H2 || node.tagType == TAG_H3
+			 || node.tagType == TAG_H4 || node.tagType == TAG_H5 || node.tagType == TAG_H6))
 		{
 			tagtypeisH  = true;
 			if (nodeType == NODE_START_TAG)
@@ -870,7 +870,7 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 			//m_isBody = true;
 			m_bodystart = true;
 		}
-		
+
 		attributNumber = v_attributes.size();
 		node.propCount = attributNumber;
 		if (attributNumber > 0)
@@ -897,7 +897,7 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 						}
 					}
 				}
-			}	
+			}
 		}
 		node.tagType = GetTagTypeByTagName(node.tagName);
 	}
@@ -930,9 +930,9 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 		{
 			delete[] temp;
 		}
-		
-		//»Áπ˚ «bodyÃÂƒ⁄µƒø’∞◊£¨»°œ˚µÙ
-		
+
+		//Â¶ÇÊûúÊòØbody‰ΩìÂÜÖÁöÑÁ©∫ÁôΩÔºåÂèñÊ∂àÊéâ
+
 		if (m_lastNodeType != NODE_START_TAG || strcmp(m_lastNodeName,"body")==0)
 		{
 			m_Trim(szText);
@@ -943,7 +943,7 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 		}
 		if (isPush && m_bodystart)
 		{
-			
+
 			node.text = new myWcharT[textlength + 1];
 			if (node.text == NULL)
 			{
@@ -956,19 +956,19 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 			memset(node.text,0,textlength*sizeof(myWcharT) + sizeof(myWcharT));
 			switch(m_encoding)
 			{
-			case GBK:
-			case GB2312:
-				stringCon.GbkToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
-				break;
-			case UTF8:
-				stringCon.Utf8ToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
-				break;
-			case GB18030:
-				stringCon.Gb18030ToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
-				break;
-			default:
-				memcpy(node.text,szText,textlength);
-				break;
+				case GBK:
+				case GB2312:
+					stringCon.GbkToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
+					break;
+				case UTF8:
+					stringCon.Utf8ToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
+					break;
+				case GB18030:
+					stringCon.Gb18030ToUnicodeBig(szText,strlen(szText),node.text,textlength*sizeof(myWcharT));
+					break;
+				default:
+					memcpy(node.text,szText,textlength);
+					break;
 			}
 		}
 		if (szText)
@@ -976,7 +976,7 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 			delete[] szText;
 			szText = NULL;
 		}
-	}		
+	}
 	m_lastNodeType = node.nodeType;
 	strcpy(m_lastNodeName,node.tagName);
 	if (isPush)
@@ -993,35 +993,35 @@ void CHtmlParser::ProcessTag(/*CByteBuffer*/string& tagName, vector<HTMLNodeProp
 // 		}
 // 		else
 // 		{
-			if (/*m_isBody*/m_bodystart)
+		if (/*m_isBody*/m_bodystart)
+		{
+
+			m_vHtmlNode->push_back(node);
+		}
+		else
+		{
+			for (j=0;j<node.propCount;j++)
 			{
-				
-				m_vHtmlNode->push_back(node);
+				node.nodeProps[j].Clear();
 			}
-			else
+			if (node.nodeProps)
 			{
-				for (j=0;j<node.propCount;j++)
-				{
-					node.nodeProps[j].Clear();
-				}
-				if (node.nodeProps)
-				{
-					delete[] node.nodeProps;
-					node.nodeProps = NULL;
-				}
-				if (node.tagName)
-				{
-					delete[] node.tagName;
-					node.tagName = NULL;
-				}
-				if (node.text)
-				{
-					delete[] node.text;
-					node.text = NULL;
-				}
+				delete[] node.nodeProps;
+				node.nodeProps = NULL;
 			}
+			if (node.tagName)
+			{
+				delete[] node.tagName;
+				node.tagName = NULL;
+			}
+			if (node.text)
+			{
+				delete[] node.text;
+				node.text = NULL;
+			}
+		}
 //		}
-		
+
 	}
 
 	else
@@ -1097,7 +1097,7 @@ string CHtmlParser::ProcessEntity(myBYTE* buffer,int start, int length)
 
 bool CHtmlParser::ParserHtml2(void)
 {
-	
+
 	return true;
 }
 
