@@ -2,10 +2,8 @@ package com.chaoxing.epub;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -53,12 +51,14 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewHolder.mTvMessage.setVisibility(View.GONE);
             viewHolder.mBtnRetry.setVisibility(View.GONE);
             viewHolder.mLoadingStatus.setVisibility(View.VISIBLE);
+            viewHolder.mPageView.setImageResource(R.drawable.libepub_page_white);
         } else if (resourcePage.isError()) {
             viewHolder.mLoadingView.setVisibility(View.GONE);
             viewHolder.mTvMessage.setText(resourcePage.getMessage());
             viewHolder.mTvMessage.setVisibility(View.VISIBLE);
             viewHolder.mBtnRetry.setVisibility(View.VISIBLE);
             viewHolder.mLoadingStatus.setVisibility(View.VISIBLE);
+            viewHolder.mPageView.setImageResource(R.drawable.libepub_page_white);
         } else {
             viewHolder.mLoadingStatus.setVisibility(View.GONE);
             viewHolder.mLoadingView.setVisibility(View.GONE);
@@ -106,29 +106,29 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mPageList.get(position);
     }
 
-    @Override
-    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        PageViewHolder viewHolder = (PageViewHolder) holder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (mPageListener != null) {
-                mPageListener.recyclePage(holder.getAdapterPosition());
-            }
-        } else {
-            if (mPageListener != null) {
-                mPageListener.recyclePageBefore21(viewHolder.mResourcePage);
-            }
-        }
-
-        StringBuilder builder = new StringBuilder("onPageRecycled : \n");
-        for (Resource<EpubPage> page : mPageList) {
-            if (page.getData().getBitmap() != null && !page.getData().getBitmap().isRecycled()) {
-                builder.append("fileId:").append(page.getData().getFileId())
-                        .append(" page number:").append(page.getData().getPageNumber()).append("\n");
-            }
-        }
-        Log.i(TAG, builder.toString());
-        super.onViewRecycled(holder);
-    }
+//    @Override
+//    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+//        PageViewHolder viewHolder = (PageViewHolder) holder;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if (mPageListener != null) {
+//                mPageListener.recyclePage(holder.getAdapterPosition());
+//            }
+//        } else {
+//            if (mPageListener != null) {
+//                mPageListener.recyclePageBefore21(viewHolder.mResourcePage);
+//            }
+//        }
+//
+//        StringBuilder builder = new StringBuilder("onPageRecycled : \n");
+//        for (Resource<EpubPage> page : mPageList) {
+//            if (page.getData().getBitmap() != null && !page.getData().getBitmap().isRecycled()) {
+//                builder.append("fileId:").append(page.getData().getFileId())
+//                        .append(" page number:").append(page.getData().getPageNumber()).append("\n");
+//            }
+//        }
+//        Log.i(TAG, builder.toString());
+//        super.onViewRecycled(holder);
+//    }
 
     public void setPageList(List<Resource<EpubPage>> pageList) {
         mPageList = pageList;
@@ -147,7 +147,9 @@ public class EpubPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             }
         }
-        notifyDataSetChanged();
+        if (position >= 0) {
+            notifyItemChanged(position);
+        }
     }
 
     static class PageViewHolder extends RecyclerView.ViewHolder {

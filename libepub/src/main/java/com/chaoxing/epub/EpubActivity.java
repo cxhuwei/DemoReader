@@ -345,6 +345,17 @@ public class EpubActivity extends AppCompatActivity {
     int pagePosition = 0;
 
     private void notifyPageCountChanged() {
+        if (!mDocumentPager.isComputingLayout()) {
+            doNotifyPageCountChanged();
+        } else {
+            mHandler.post(() -> {
+                        doNotifyPageCountChanged();
+                    }
+            );
+        }
+    }
+
+    private void doNotifyPageCountChanged() {
         List<Resource<EpubPage>> pageList = new ArrayList<>();
 
         DocumentBinding documentBinding = mViewModel.getDocumentBinding();
@@ -708,15 +719,20 @@ public class EpubActivity extends AppCompatActivity {
 
         @Override
         public void recyclePageBefore21(Resource<EpubPage> resourcePage) {
-            if (resourcePage != null) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
-                int[] positions = {layoutManager.findFirstVisibleItemPosition(),
-                        layoutManager.findFirstCompletelyVisibleItemPosition(),
-                        layoutManager.findLastVisibleItemPosition(),
-                        layoutManager.findLastCompletelyVisibleItemPosition()};
-                doRecyclePageBefor21(resourcePage, positions);
-                Log.i(TAG, "recyclePage : " + positions[0] + " " + positions[1] + " " + positions[2] + " " + positions[3]);
-            }
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (resourcePage != null) {
+                        LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
+                        int[] positions = {layoutManager.findFirstVisibleItemPosition(),
+                                layoutManager.findFirstCompletelyVisibleItemPosition(),
+                                layoutManager.findLastVisibleItemPosition(),
+                                layoutManager.findLastCompletelyVisibleItemPosition()};
+                        doRecyclePageBefor21(resourcePage, positions);
+                        Log.i(TAG, "recyclePage : " + positions[0] + " " + positions[1] + " " + positions[2] + " " + positions[3]);
+                    }
+                }
+            });
         }
 
         private void doRecyclePageBefor21(Resource<EpubPage> resourcePage, int[] positions) {

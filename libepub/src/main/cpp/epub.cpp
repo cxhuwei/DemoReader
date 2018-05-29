@@ -408,12 +408,15 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
     t_PageOutData pageOutData;
 
     myBYTE * bitmapData/*jbyte *bitmapData*/ = (myBYTE *) bookReader->GetPageByFileSmallPageNumber(fileid, smallPageNumber,
-                                                                                                   bmp, lSize, pageOutData);
+                                                                           bmp, lSize, pageOutData);
 
     if (bitmapData == NULL) {
         return 1;
     }
 
+    char szpath[256];
+    sprintf(szpath,"/sdcard/%d_%d.bmp",fileid,smallPageNumber);
+    bmp.writeBMPFile(szpath);
     AndroidBitmapInfo info;
     int ret;
     memset(&info, 0, sizeof(info));
@@ -443,7 +446,7 @@ JNIEXPORT jint JNICALL Java_com_chaoxing_epub_nativeapi_EpubDocument_nativeDrawP
         for (int x = 0; x < info.width; x++) {
             void *pixel = ((uint32_t *)pixels) + y * info.width + x;
             myRGBQUAD color = bmp.GetOriPixel(x,bmp.m_iHeight-y-1);
-            *((uint32_t *)pixel) = MAKE_RGBA(color.rgbRed, color.rgbGreen,color.rgbBlue, color.rgbReserved);
+            *((uint32_t *)pixel) = MAKE_RGBA(color.rgbRed, color.rgbGreen,color.rgbBlue, 255);
         }
     }
 

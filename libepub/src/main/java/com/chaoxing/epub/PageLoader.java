@@ -2,9 +2,13 @@ package com.chaoxing.epub;
 
 import android.arch.lifecycle.LiveData;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.chaoxing.epub.nativeapi.EpubDocument;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by HUWEI on 2018/5/22.
@@ -33,6 +37,7 @@ public class PageLoader {
                     if (r == 0) {
                         page.setBitmap(bitmap);
                         result = Resource.success(page);
+                        cachePage(page);
                     } else {
                         bitmap.recycle();
                         result = Resource.error(String.format("页面绘制错误(error=%d)", r), page);
@@ -47,5 +52,23 @@ public class PageLoader {
         return execute.execute(new Object[]{epubPage, width, height});
     }
 
+    private void cachePage(EpubPage page) {
+        try {
+            Bitmap bitmap = page.getBitmap();
+            if (bitmap == null || bitmap.isRecycled()) {
+                return;
+            }
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "demo_reader");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File file = new File(dir, page.getFileId() + "_" + page.getPageNumber() + "_" + System.currentTimeMillis() + ".png");
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 80, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

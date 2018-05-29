@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, EpubActivity.class);
             intent.setData(Uri.fromFile(file));
             startActivity(intent);
+            int position = ((LinearLayoutManager) mFileList.getLayoutManager()).findFirstVisibleItemPosition();
+            Toast.makeText(this, "position : " + position, Toast.LENGTH_SHORT).show();
         }
     }
 

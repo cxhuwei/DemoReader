@@ -739,7 +739,7 @@ void *SZEbookReader::GetPageByFileSmallPageNumber(unsigned int fileId, unsigned 
     if (finder != m_mapAllPageInfo.end() && finder->second.size() >= smallPageNumber &&
         smallPageNumber > 0) {
         myBookRecord bookrecord = finder->second[smallPageNumber - 1];
-        return DrawCurrentPage(imageCur, imageSize, pageOutData);
+        return DrawCurrentPage(imageCur, imageSize, pageOutData, &bookrecord);
     }
     return NULL;
 }
