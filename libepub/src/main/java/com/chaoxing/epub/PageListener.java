@@ -15,8 +15,6 @@ public interface PageListener {
 
     void loadPage(EpubPage page);
 
-    void recyclePage(int position);
-
-    void recyclePageBefore21(Resource<EpubPage> resourcePage);
+    void recyclePage(EpubPage page);
 
 }

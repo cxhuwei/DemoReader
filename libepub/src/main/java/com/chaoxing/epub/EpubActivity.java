@@ -705,69 +705,62 @@ public class EpubActivity extends AppCompatActivity {
         }
 
         @Override
-        public void recyclePage(int position) {
-            if (position >= 0 && position < mPagerAdapter.getItemCount()) {
-                EpubPage page = mPagerAdapter.getItemAtPosition(position).getData();
-                Bitmap bitmap = page.getBitmap();
-                page.setBitmap(null);
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    bitmap.recycle();
-                    Log.i(TAG, String.format("recyclePage : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
-                }
-            }
-        }
-
-        @Override
-        public void recyclePageBefore21(Resource<EpubPage> resourcePage) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (resourcePage != null) {
-                        LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
-                        int[] positions = {layoutManager.findFirstVisibleItemPosition(),
-                                layoutManager.findFirstCompletelyVisibleItemPosition(),
-                                layoutManager.findLastVisibleItemPosition(),
-                                layoutManager.findLastCompletelyVisibleItemPosition()};
-                        doRecyclePageBefor21(resourcePage, positions);
-                        Log.i(TAG, "recyclePage : " + positions[0] + " " + positions[1] + " " + positions[2] + " " + positions[3]);
-                    }
-                }
-            });
-        }
-
-        private void doRecyclePageBefor21(Resource<EpubPage> resourcePage, int[] positions) {
-            EpubPage page = resourcePage.getData();
-            if (page.getBitmap() == null || page.getBitmap().isRecycled()) {
-                return;
-            }
-
-            List<Resource<EpubPage>> positionPageList = new ArrayList<>();
-            for (int i = 0; i < positions.length; i++) {
-                int position = positions[i];
-                if (position >= 0 && position < mPagerAdapter.getItemCount()) {
-                    positionPageList.add(mPagerAdapter.getItemAtPosition(position));
-                }
-            }
-            boolean recyclable = true;
-            for (Resource<EpubPage> positionResource : positionPageList) {
-                EpubPage positionPage = positionResource.getData();
-                if (positionPage != null) {
-                    if (page.getFileId() == positionPage.getFileId() && page.getPageNumber() == positionPage.getPageNumber()) {
-                        recyclable = false;
-                        break;
-                    }
-                }
-            }
-
-            if (recyclable) {
-                Bitmap bitmap = page.getBitmap();
-                page.setBitmap(null);
-                bitmap.recycle();
-                Log.i(TAG, String.format("recyclePage : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
-            }
+        public void recyclePage(EpubPage page) {
+            EpubActivity.this.recyclePage(page);
         }
 
     };
+
+    private void recyclePage(EpubPage page) {
+        if (!mDocumentPager.isComputingLayout()) {
+            doRecyclePage(page);
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    doRecyclePage(page);
+                }
+            });
+        }
+    }
+
+    private void doRecyclePage(EpubPage page) {
+        if (page.getBitmap() == null || page.getBitmap().isRecycled()) {
+            return;
+        }
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) mDocumentPager.getLayoutManager();
+        int[] positions = {layoutManager.findFirstVisibleItemPosition(),
+                layoutManager.findFirstCompletelyVisibleItemPosition(),
+                layoutManager.findLastVisibleItemPosition(),
+                layoutManager.findLastCompletelyVisibleItemPosition()};
+
+        List<Resource<EpubPage>> positionPageList = new ArrayList<>();
+        for (int i = 0; i < positions.length; i++) {
+            int position = positions[i];
+            if (position >= 0 && position < mPagerAdapter.getItemCount()) {
+                positionPageList.add(mPagerAdapter.getItemAtPosition(position));
+            }
+        }
+        boolean recyclable = true;
+        for (Resource<EpubPage> positionResource : positionPageList) {
+            EpubPage positionPage = positionResource.getData();
+            if (positionPage != null) {
+                if (page.getFileId() == positionPage.getFileId() && page.getPageNumber() == positionPage.getPageNumber()) {
+                    recyclable = false;
+                    break;
+                }
+            }
+        }
+
+        if (recyclable) {
+            Bitmap bitmap = page.getBitmap();
+            page.setBitmap(null);
+            bitmap.recycle();
+            Log.i(TAG, String.format("recyclePage : file id = %d page number = %d", page.getFileId(), page.getPageNumber()));
+        }
+    }
+
 
     @Override
     protected void onResume() {
